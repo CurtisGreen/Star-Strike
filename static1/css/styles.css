@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 14pt;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 2.5rem;
+
+  background: linear-gradient(to bottom right, #51A2E6, #47AD9F);
+  color: white;
+  font-size: 1.25rem;
+  overflow: clear;
+}
+
+.header .status {
+  margin-top: 1.2rem;
+  margin-right: 2rem;
+  float: right;
+}
+
+.header .title {
+  margin-top: 0.8rem;
+  margin-left: 2rem;
+}
+
+#login_status {
+  font-size: 0.8rem;
+}
+
+.content {
+  position: fixed;
+  top: 2.5rem;
+  width: 100%;
+  bottom: 0;
+  padding: 1rem;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 0.9rem;
+}
+
+#login_section {
+  text-align: center;
+}
+
+#room_section {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0.5rem;
+  border: 1px solid lightgray;
+}
+
+#inputs {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.25rem;
+  background-color: lightgray;
+}
+
+#send_button {
+  margin-top: 0.1rem;
+  float: right;
+}
+
+#msg_input_wrapper {
+  padding-right: 0.2rem;
+  overflow: hidden;
+}
+
+#msg_input {
+  width: 100%;
+}
+
+.msg_box {
+  padding: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.msg_box:hover {
+  background-color: lightblue;
+}
+
+.sender {
+  font-weight: bold;
+}
+
+.said {
+  color: blue;
+}
+
+.msg_content {
+  font-size: 1rem;
+}
+
+.notification {
+  color: darkgreen;
+}
+
+.error {
+  color: red;
+}
+
