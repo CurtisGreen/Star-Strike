@@ -1,0 +1,25 @@
+{
+  "name": "web-socket-chat-example",
+  "version": "0.3.0",
+  "description": "A chat service using socket.io.",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quyin/WebSocketChat.git"
+  },
+  "author": "Yin Qu (me.yin.qu@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quyin/WebSocketChat/issues"
+  },
+  "homepage": "https://github.com/quyin/WebSocketChat#readme"
+}
