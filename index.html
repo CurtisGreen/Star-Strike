@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<!--
+  This page implements a simple chat room client, to illustrate WebSocket with
+  socket.io and node.js.
+-->
+
+<html>
+
+  <head>
+    <title>Star Strike</title>
+	<script type="text/javascript" src="phaser.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+
+    <!--
+      jQuery is a JavaScript library that provides many handy tools, e.g. for
+      manipulating HTML elements, handling events, etc.
+    -->
+    <script src="lib/jquery-2.2.2.js"></script>
+	
+
+    <!--
+      socket.io.js will be provided by the web server.
+    -->
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="status" id="login_status">not logged in</div>
+      <div class="title">Star Strike</div>
+    </div>
+
+    <div class="content">
+      <div id="login_section">
+        <input id="user_id_input" type="text" placeholder="your user id"/>
+        <input id="login_button" type="button" value="log in"/>
+        <div id="login_error" class="error"></div>
+      </div>
+
+      <div id="room_section" style="display:none">
+        <div id="msg_list">
+        </div>
+        <div id="inputs">
+          <input id="send_button" type="button" value="send message"/>
+          <div id="msg_input_wrapper">
+            <input id="msg_input" type="text" placeholder="type in message here"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      Our own JS code.
+    -->
+	<script src = functions.js></script>
+    <script src="js/login.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/base.js"></script>
+  </body>
+
+</html>
+
