@@ -22,7 +22,7 @@ $('#msg_input').keypress(function(event) {    //function is not necessary curren
   }
 });
 
-$('#login_button').click(login);  //TODO: modify for our menu/login
+$('#login_button').click(login);  //TODO: modify for our menu/login, this should start the game
 
 $('#send_button').click(send);    //TODO: modify for a submenu, EX: ship selection
 
