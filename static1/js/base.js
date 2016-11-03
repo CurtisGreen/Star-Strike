@@ -6,7 +6,7 @@ socket = io();
 
 // set up event handlers.
 
-$('#user_id_input').keypress(function(event) {
+$('#user_id_input').keypress(function(event) {    //TODO: modify this function for menu login (only necessary if we're doing usernames)
   // When 'enter' is pressed in the user ID box, it should be treated as
   // clicking on the 'log in' button.
   if (event.keyCode === 13) {
@@ -14,7 +14,7 @@ $('#user_id_input').keypress(function(event) {
   }
 });
 
-$('#msg_input').keypress(function(event) {
+$('#msg_input').keypress(function(event) {    //function is not necessary currently
   // When 'enter' is pressed in the message box, it should be treated as
   // clicking on the 'send message' button.
   if (event.keyCode === 13) {
@@ -22,7 +22,7 @@ $('#msg_input').keypress(function(event) {
   }
 });
 
-$('#login_button').click(login);
+$('#login_button').click(login);  //TODO: modify for our menu/login
 
-$('#send_button').click(send);
+$('#send_button').click(send);    //TODO: modify for a submenu, EX: ship selection
 
