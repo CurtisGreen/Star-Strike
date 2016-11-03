@@ -86,7 +86,7 @@ io.sockets.on('connection', function(conn) {
 
 // Listen on a high port.
 
-var port = 12133
+var port = 12133;
 
 
 server.listen(port, function() {
