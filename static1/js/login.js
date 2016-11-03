@@ -7,7 +7,7 @@ function login() {    //TODO: Change for our menu/login
       user_id: userId,
     });
   }
-
+ 
   socket.on('login_ok', function(msg) {   //TODO: replace with running the game
     $('#login_error').html("");
     startChat(userId);
