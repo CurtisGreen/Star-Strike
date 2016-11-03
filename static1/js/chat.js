@@ -16,9 +16,9 @@ function createNotificationDiv(notif) {
   return notificationDiv;
 }
 
-function startChat(userId) {
-  $('#login_section').hide();
-  $('#room_section').show();
+function startChat(userId) {  //TODO: change this to start game
+  $('#login_section').hide(); //hide login
+  $('#room_section').show();  //show game
 
   var loginStatus = $('#login_status').text("logged in as " + userId);
 
@@ -44,7 +44,7 @@ function startChat(userId) {
   });
 }
 
-function send() {
+function send() {   //TODO: Change to be something in submenu (ex: ship selection), or whatever we decide to set send() to under base.js
   var msgBox = $('#msg_input');
   var content = msgBox.val();
   if (content && content != "") {
