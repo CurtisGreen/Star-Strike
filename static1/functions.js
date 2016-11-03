@@ -1,5 +1,6 @@
 
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+//TODO: create second game window
 
 /*----variables----*/
 var player;
@@ -24,7 +25,7 @@ function preload() {
 }
 
 
-function create() {
+function create() {     //TODO: duplicate for player 2
 
     //  This will run in Canvas mode, so let's gain a little speed and display
     game.renderer.clearBeforeRender = false;
@@ -72,7 +73,7 @@ function create() {
 
 }
 
-function update() {
+function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
     game.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 
     if (cursors.up.isDown)
@@ -108,14 +109,14 @@ function update() {
 
      scoreText.text = 'Score:' + score;
 
-    if(score == 3000) {
+    if(score == 3000) {     //TODO: instead of points have it display number stars
         winText.visible = true;
         scoreText.visible = false;
     }
 
 }
 
-function fireBullet () {
+function fireBullet () {    //TODO: same as above, make another function that does this except for using server commands to update screen 2
 
     if (game.time.now > bulletTime)
     {
@@ -133,7 +134,7 @@ function fireBullet () {
 
 }
 
-function screenWrap (player) {
+function screenWrap (player) {  
 
     if (player.x < 0)
     {
@@ -155,10 +156,12 @@ function screenWrap (player) {
 
 }
 
+//TODO: screen wrap for player 2
+
 function render() {
 }
 
-function createStars(){
+function createStars(){     //TODO: make stars move randomly, starting with 1
     for (var y = 0; y < 4; y++){
         for (var x = 0; x < 10; x++){
             var star = stars.create(x*48, y*50, 'star');
@@ -178,9 +181,10 @@ function descend(){
     stars.y ==10;
 }
 
-function collisionHandler(bullet, star){
+function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     bullet.kill();
     star.kill();
 
     score += 100;
 }
+//TODO: add collision handling for player & star
