@@ -31,7 +31,7 @@ io.sockets.on('connection', function(conn) {
   // reference to that connection (represented by 'conn'). That's why we can
   // refer to 'conn' in these callback functions to get the correct connection.
 
-  conn.on('login', function(msg) {
+  conn.on('login', function(msg) {    //TODO: Modify this function for our login/menu
     if (msg && msg.user_id
         && /^[^\/]+$/.test(msg.user_id)
         && msg.user_id != '*'
@@ -55,7 +55,7 @@ io.sockets.on('connection', function(conn) {
     }
   });
 
-  conn.on('chat', function(msg) {
+  conn.on('chat', function(msg) {   //TODO: modify this function by updating the game for the second screen
     if (msg && msg.content) {
       // Broadcast this message to everyone in the room.
       var chat = {
