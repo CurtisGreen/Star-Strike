@@ -79,28 +79,34 @@ function update() { //TODO: listen for server commands and do these same things 
     if (cursors.up.isDown)
     {
         game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
+        socket.emit('up');
     }
     else
     {
         player.body.acceleration.set(0);
+        socket.emit('notUp');
     }
 
     if (cursors.left.isDown)
     {
         player.body.angularVelocity = -300;
+        socket.emit('left');
     }
     else if (cursors.right.isDown)
     {
         player.body.angularVelocity = 300;
+        socket.emit('right');
     }
     else
     {
         player.body.angularVelocity = 0;
+        socket.emit('notTurn');
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.Z))
     {
         fireBullet();
+        socket.emit('fire');
     }
 
     screenWrap(player);
