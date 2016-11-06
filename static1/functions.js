@@ -79,45 +79,53 @@ function create() {     //TODO: duplicate for player 2
 
 }
 
+function updateP2(){
+    if (count > 25){
+        socket.emit('chat', {
+          x: player.x,
+          y: player.y,
+          rotation: player.rotation,
+          fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
+        });
+        count = 0;
+    }
+    else{
+        count++;
+    }
+}
+
 function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
     game.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 
     if (cursors.up.isDown)
     {
         game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
-        //if (count > 10)
-        socket.emit('chat', {
-          x: player.x,
-          y: player.y,
-          rotation: player.rotation,
-        });
+        updateP2();
     }
     else
     {
         player.body.acceleration.set(0);
-        socket.emit('notUp');
     }
 
     if (cursors.left.isDown)
     {
         player.body.angularVelocity = -300;
-        socket.emit('left');
+        updateP2();
     }
     else if (cursors.right.isDown)
     {
         player.body.angularVelocity = 300;
-        socket.emit('right');
+        updateP2();
     }
     else
     {
         player.body.angularVelocity = 0;
-        socket.emit('notTurn');
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.Z))
     {
         fireBullet();
-        socket.emit('fire');
+        updateP2();
     }
 
     screenWrap(player);
