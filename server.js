@@ -56,19 +56,9 @@ io.sockets.on('connection', function(conn) {
   });
 
   conn.on('chat', function(msg) {   //TODO: modify this function by updating the game for the second screen
-    if (msg && msg.content) {
-      // Broadcast this message to everyone in the room.
-      var chat = {
-        ts: Date.now(),
-        sender: conn.user_id,
-        receiver: "*",
-        content: msg.content,
-      };
-      chat.id = digest(chat.sender + chat.ts + chat.content);
-      io.emit('chat', chat);
-    }
-    // If the message seems invalid, it'll be ignored.
+      io.emit('chat', msg);
   });
+
 
   conn.on('disconnect', function() {
     if (conn.user_id) {

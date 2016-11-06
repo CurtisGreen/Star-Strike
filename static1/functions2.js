@@ -1,6 +1,6 @@
 
-var game2 = new Phaser.Game(648, 648, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
-//TODO: create second game window
+game2 = new Phaser.Game(648, 648, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
+
 
 /*----variables----*/
 var player;
@@ -14,6 +14,8 @@ var stars;
 var score = 0;
 var scoreText;
 var winText;
+
+var count = 0;
 
 function preload() {
     //all image files are in 'assets' folder
@@ -33,6 +35,8 @@ function create() {     //TODO: duplicate for player 2
 
     //  We need arcade physics
     game2.physics.startSystem(Phaser.Physics.ARCADE);
+
+    game2.desiredFPS = 1;
 
     //  A spacey background
     game2.add.tileSprite(-100,-100,900,700,'universe');
@@ -76,9 +80,20 @@ function create() {     //TODO: duplicate for player 2
 function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
     game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 
-    socket.on('up', function() {  
-        game2.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
-    });
+    if (count > 100){
+        socket.on('chat', function(msg) {  
+        //console.log('function 2 = '+ msg);
+        player.x = msg.x;
+        player.y = msg.y;
+        player.rotation = msg.rotation;
+        //game2.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
+        });
+        count = 0;
+    }
+    else{
+        count++;
+    }
+    
     socket.on('notUp', function() {  
         player.body.acceleration.set(0);
     });
@@ -202,4 +217,5 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 
     score += 100;
 }
+
 //TODO: add collision handling for player & star

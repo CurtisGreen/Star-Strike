@@ -24,15 +24,19 @@ function startChat(userId) {  //TODO: change this to start game
 
   // If a chat message is received, display it.
   socket.on('chat', function(msg) {
-    if (msg
+    console.log('got chat');
+    console.log(msg);
+    /*if (msg
         && msg.sender && msg.sender != ""
-        && msg.content && msg.content != "") {
-      var msgDiv = createMessageDiv(msg);
+        && msg.content && msg.content != "") {*/
+      var msgDiv = createMessageDiv(msg.x);
       $('#msg_list').append(msgDiv);
-    } else {
+    /*} else {
       console.error("Malformed msg: " + msg);
-    }
+    }*/
   });
+
+  
 
   // If a notification is received, display it.
   socket.on('notification', function(notif) {
@@ -44,14 +48,5 @@ function startChat(userId) {  //TODO: change this to start game
   });
 }
 
-function send() {   //TODO: Change to be something in submenu (ex: ship selection), or whatever we decide to set send() to under base.js
-  var msgBox = $('#msg_input');
-  var content = msgBox.val();
-  if (content && content != "") {
-    socket.emit('chat', {
-      content: content,
-    });
-  }
-  msgBox.val(""); // clear the input field.
-}
+
 

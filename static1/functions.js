@@ -1,5 +1,6 @@
 
 var game = new Phaser.Game(648,648, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+
 //TODO: create second game window
 
 /*----variables----*/
@@ -14,6 +15,8 @@ var stars;
 var score = 0;
 var scoreText;
 var winText;
+
+var count = 0;
 
 function preload() {
     //all image files are in 'assets' folder
@@ -30,6 +33,9 @@ function create() {     //TODO: duplicate for player 2
     //  This will run in Canvas mode, so let's gain a little speed and display
     game.renderer.clearBeforeRender = false;
     game.renderer.roundPixels = true;
+
+    //lower fps
+    //game.desiredFPS = 1;
 
     //  We need arcade physics
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -79,7 +85,12 @@ function update() { //TODO: listen for server commands and do these same things 
     if (cursors.up.isDown)
     {
         game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
-        socket.emit('up');
+        //if (count > 10)
+        socket.emit('chat', {
+          x: player.x,
+          y: player.y,
+          rotation: player.rotation,
+        });
     }
     else
     {
@@ -193,4 +204,5 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 
     score += 100;
 }
+
 //TODO: add collision handling for player & star

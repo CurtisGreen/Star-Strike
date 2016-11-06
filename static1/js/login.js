@@ -10,6 +10,8 @@ function login() {    //TODO: Change for our menu/login
  
   socket.on('login_ok', function(msg) {   //TODO: replace with running the game
     $('#login_error').html("");
+    //startGame();
+    //startGame2();
     startChat(userId);
   });
 
