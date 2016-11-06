@@ -31,6 +31,7 @@ io.sockets.on('connection', function(conn) {
   // reference to that connection (represented by 'conn'). That's why we can
   // refer to 'conn' in these callback functions to get the correct connection.
 
+
   conn.on('login', function(msg) {    //TODO: Modify this function for our login/menu
     if (msg && msg.user_id
         && /^[^\/]+$/.test(msg.user_id)

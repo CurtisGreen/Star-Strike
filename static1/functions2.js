@@ -1,4 +1,7 @@
 
+
+function startGame2(){
+
 game2 = new Phaser.Game(648, 648, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
 
 
@@ -95,7 +98,7 @@ function update() { //TODO: listen for server commands and do these same things 
     else{
         count++;
     }
-    
+
     screenWrap(player);
 
     bullets.forEachExists(screenWrap, this);
@@ -180,5 +183,6 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 
     score += 100;
 }
-
+}
+startGame2();
 //TODO: add collision handling for player & star

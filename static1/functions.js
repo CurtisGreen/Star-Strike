@@ -1,4 +1,8 @@
 
+
+function startGame(){
+
+
 var game = new Phaser.Game(648,648, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 //TODO: create second game window
@@ -212,5 +216,7 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 
     score += 100;
 }
+}
 
+startGame();
 //TODO: add collision handling for player & star
