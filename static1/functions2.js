@@ -1,6 +1,6 @@
 
 
-function startGame2(){
+function startGame2(){  //Called afterwards to ensure game is fully loaded
 
 game2 = new Phaser.Game(648, 648, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
 
@@ -105,9 +105,9 @@ function update() { //TODO: listen for server commands and do these same things 
 
     bullets.forEachExists(screenWrap, this);
 
-     scoreText.text = 'Score:' + score;
+     scoreText.text = 'Stars:' + score;
 
-    if(score == 3000) {     //TODO: instead of points have it display number stars
+    if(score == 0) {     //TODO: instead of points have it display number stars
         winText.visible = true;
         scoreText.visible = false;
     }
@@ -164,6 +164,7 @@ function createStars(){     //TODO: make stars move randomly, starting with 1
         //for (var x = 0; x < 10; x++){
             var star = stars.create(48, 50, 'star');
             star.anchor.setTo (0.5,0.5);
+            score++;
         //}
     //}
 
@@ -183,7 +184,7 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
     bullet.kill();
     star.kill();
 
-    score += 100;
+    score--;
 }
 }
 startGame2();

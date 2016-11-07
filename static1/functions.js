@@ -1,11 +1,9 @@
 
 
-function startGame(){
-
+function startGame(){   //Called afterwards to ensure game is fully loaded
 
 var game = new Phaser.Game(648,648, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
-//TODO: create second game window
 
 /*----variables----*/
 var userId = 1;
@@ -43,9 +41,6 @@ function create() {
     //  This will run in Canvas mode, so let's gain a little speed and display
     game.renderer.clearBeforeRender = false;
     game.renderer.roundPixels = true;
-
-    //lower fps
-    //game.desiredFPS = 1;
 
     //  We need arcade physics
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -89,7 +84,7 @@ function create() {
 
 }
 
-function updateP2(){
+function updateP2(){    //update the user's location on the server
      //setInterval(function(){
 
         socket.emit('chat', {
@@ -110,7 +105,7 @@ function update() { //TODO: listen for server commands and do these same things 
     if (cursors.up.isDown)
     {
         game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
-        updateP2();
+        updateP2(); //send data to server
     }
     else
     {
@@ -142,16 +137,16 @@ function update() { //TODO: listen for server commands and do these same things 
 
     bullets.forEachExists(screenWrap, this);
 
-     scoreText.text = 'Score:' + score;
+     scoreText.text = 'Stars:' + score;
 
-    if(score == 3000) {     //TODO: instead of points have it display number stars
+    if(score == 0) {     //TODO: instead of points have it display number stars
         winText.visible = true;
         scoreText.visible = false;
     }
 
 }
 
-function fireBullet () {    //TODO: same as above, make another function that does this except for using server commands to update screen 2
+function fireBullet () {    //shoots lasers in targeted direction
 
     if (game.time.now > bulletTime)
     {
@@ -169,7 +164,7 @@ function fireBullet () {    //TODO: same as above, make another function that do
 
 }
 
-function screenWrap (player) {  
+function screenWrap (player) {  //let the user fly off the screen back to the other side
 
     if (player.x < 0)
     {
@@ -191,7 +186,6 @@ function screenWrap (player) {
 
 }
 
-//TODO: screen wrap for player 2
 
 function render() {
 }
@@ -201,6 +195,7 @@ function createStars(){     //TODO: make stars move randomly, starting with 1
         //for (var x = 0; x < 10; x++){
             var star = stars.create(48, 50, 'star');
             star.anchor.setTo (0.5,0.5);
+            score++;
         //}
     //}
 
@@ -220,7 +215,7 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
     bullet.kill();
     star.kill();
 
-    score += 100;
+    score--;
 }
 }
 
