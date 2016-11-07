@@ -31,10 +31,13 @@ io.sockets.on('connection', function(conn) {
   // reference to that connection (represented by 'conn'). That's why we can
   // refer to 'conn' in these callback functions to get the correct connection.
 
-  conn.userId = Math.random();
-
-  conn.emit('onconnected', { id: conn.userId } );
-  console.log('\t socket.io:: player ' + conn.userId + ' connected');
+  
+	setTimeout(function(){ 
+		conn.userId = Math.random();
+		conn.emit('onconnected', { id: conn.userId } );
+		console.log('\t socket.io:: player ' + conn.userId + ' connected');
+	}, 800);
+  
 
   conn.on('chat', function(msg) {   //TODO: modify this function by updating the game for the second screen
       io.emit('chat', msg);

@@ -37,6 +37,8 @@ function create() {     //called when object is created
         console.log('user id = '+ msg.id);
         userId = msg.id;
     });
+	userId = Math.random();
+	console.log('testerino' + startGame.userId);
 
     //  This will run in Canvas mode, so let's gain a little speed and display
     game2.renderer.clearBeforeRender = false;
