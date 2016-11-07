@@ -1,4 +1,3 @@
-// This node.js program implements a simple chat room service.
 
 // Create a web server using Express.
 var express = require('express');
@@ -32,14 +31,14 @@ io.sockets.on('connection', function(conn) {
   // refer to 'conn' in these callback functions to get the correct connection.
 
   
-	setTimeout(function(){ 
+	setTimeout(function(){ 	//Timeout to make sure the game has been created so it can receive its ID
 		conn.userId = Math.random();
 		conn.emit('onconnected', { id: conn.userId } );
 		console.log('\t socket.io:: player ' + conn.userId + ' connected');
 	}, 900);
   
 
-  conn.on('update', function(msg) {   //TODO: modify this function by updating the game for the second screen
+  conn.on('update', function(msg) {   //Sends the client data to the server then to the opposing player
       io.emit('update', msg);
   });
 
