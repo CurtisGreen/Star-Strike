@@ -31,7 +31,7 @@ function preload() {
 }
 
 
-function create() {     //called when object is created
+function create() {     //Called when object is created, creates player 2, the one the server controls
 
     socket.on('onconnected', function(msg){ //get user's unique id
         console.log('user id = '+ msg.id);
@@ -88,10 +88,10 @@ function create() {     //called when object is created
 
 }
 
-function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
+function update() {	//Called repeatedly to update the game state
     game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
     
-    socket.on('chat', function(msg) {  //Updates p2 from server
+    socket.on('update', function(msg) {  //Updates p2 from server
         //console.log(msg.id);
         if (msg.id != userId){
             player.x = msg.x;
@@ -116,7 +116,7 @@ function update() { //TODO: listen for server commands and do these same things 
 
 }
 
-function fireBullet () {    //TODO: same as above, make another function that does this except for using server commands to update screen 2
+function fireBullet () {    //TODO: change to use server rather than new bullet
 
     if (game2.time.now > bulletTime)
     {
@@ -155,8 +155,6 @@ function screenWrap (player) {
     }
 
 }
-
-//TODO: screen wrap for player 2
 
 function render() {
 }

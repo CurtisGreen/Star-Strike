@@ -31,7 +31,7 @@ function preload() {
 }
 
 
-function create() {    
+function create() { //creates player1, the one the client controls
 
     socket.on('onconnected', function(msg){ //get user's unique id
         console.log('user id = '+ msg.id);
@@ -85,21 +85,17 @@ function create() {
 }
 
 function updateP2(){    //update the user's location on the server
-     //setInterval(function(){
 
-        socket.emit('chat', {
-          id: userId,
-          x: player.x,
-          y: player.y,
-          rotation: player.rotation,
-          fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
-        });
-   
-   
-    //},1000);
+	socket.emit('update', {
+	  id: userId,
+	  x: player.x,
+	  y: player.y,
+	  rotation: player.rotation,
+	  fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
+	});
 }
 
-function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
+function update() { //Called 60 times per second to update the state of the game for the user
     game.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 
     if (cursors.up.isDown)
@@ -133,7 +129,7 @@ function update() { //TODO: listen for server commands and do these same things 
         updateP2();
     }
 
-    screenWrap(player);
+    screenWrap(player);	//Let the player move from one side of the screen to the next
 
     bullets.forEachExists(screenWrap, this);
 

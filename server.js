@@ -36,11 +36,11 @@ io.sockets.on('connection', function(conn) {
 		conn.userId = Math.random();
 		conn.emit('onconnected', { id: conn.userId } );
 		console.log('\t socket.io:: player ' + conn.userId + ' connected');
-	}, 800);
+	}, 900);
   
 
-  conn.on('chat', function(msg) {   //TODO: modify this function by updating the game for the second screen
-      io.emit('chat', msg);
+  conn.on('update', function(msg) {   //TODO: modify this function by updating the game for the second screen
+      io.emit('update', msg);
   });
 
    conn.on('disconnect', function () {
