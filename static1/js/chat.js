@@ -1,6 +1,6 @@
 // Chat using socket.io.
 
-function createMessageDiv(msg) {
+/*function createMessageDiv(msg) {
   // A <div> for displaying the content.
   var msgDiv = $('<div/>').addClass('msg_box');
   msgDiv.append($('<span/>').addClass('sender').text(msg.sender));
@@ -26,14 +26,14 @@ function startChat(userId) {  //TODO: change this to start game
   socket.on('chat', function(msg) {
     console.log('got chat');
     console.log(msg);
-    /*if (msg
+    if (msg
         && msg.sender && msg.sender != ""
-        && msg.content && msg.content != "") {*/
+        && msg.content && msg.content != "") {
       var msgDiv = createMessageDiv(msg.x);
       $('#msg_list').append(msgDiv);
-    /*} else {
+    } else {
       console.error("Malformed msg: " + msg);
-    }*/
+    }
   });
 
   
@@ -46,7 +46,7 @@ function startChat(userId) {  //TODO: change this to start game
     }
     // If the notification content is empty, it is ignored.
   });
-}
+}*/
 
 
 

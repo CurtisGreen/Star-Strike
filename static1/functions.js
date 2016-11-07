@@ -8,6 +8,7 @@ var game = new Phaser.Game(648,648, Phaser.CANVAS, 'phaser-example', { preload: 
 //TODO: create second game window
 
 /*----variables----*/
+var userId = 1;
 var player;
 var cursors;
 
@@ -32,7 +33,12 @@ function preload() {
 }
 
 
-function create() {     //TODO: duplicate for player 2
+function create() {    
+
+    socket.on('onconnected', function(msg){ //get user's unique id
+        console.log('user id = '+ msg.id);
+        userId = msg.id;
+    });
 
     //  This will run in Canvas mode, so let's gain a little speed and display
     game.renderer.clearBeforeRender = false;
@@ -84,9 +90,10 @@ function create() {     //TODO: duplicate for player 2
 }
 
 function updateP2(){
-     setInterval(function(){
+     //setInterval(function(){
 
         socket.emit('chat', {
+          id: userId,
           x: player.x,
           y: player.y,
           rotation: player.rotation,
@@ -94,7 +101,7 @@ function updateP2(){
         });
    
    
-    },1000);
+    //},1000);
 }
 
 function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands

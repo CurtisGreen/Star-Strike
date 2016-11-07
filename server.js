@@ -31,48 +31,20 @@ io.sockets.on('connection', function(conn) {
   // reference to that connection (represented by 'conn'). That's why we can
   // refer to 'conn' in these callback functions to get the correct connection.
 
+  conn.userId = Math.random();
 
-  conn.on('login', function(msg) {    //TODO: Modify this function for our login/menu
-    if (msg && msg.user_id
-        && /^[^\/]+$/.test(msg.user_id)
-        && msg.user_id != '*'
-        && msg.user_id != 'system') {
-      // Message seems valid.
-      conn.user_id = msg.user_id;
-
-      conn.emit('login_ok');
-      // Broadcast that someone entered the room.
-      var notif = {
-        ts: Date.now(),
-        sender: "system",
-        receiver: "*",
-        content: conn.user_id + " entered the room.",
-      };
-      notif.id = digest(notif.receiver + notif.ts + notif.content);
-      io.emit('notification', notif);
-    } else {
-      // When something is wrong, send a login_fail message to the client.
-      conn.emit('login_fail');
-    }
-  });
+  conn.emit('onconnected', { id: conn.userId } );
+  console.log('\t socket.io:: player ' + conn.userId + ' connected');
 
   conn.on('chat', function(msg) {   //TODO: modify this function by updating the game for the second screen
       io.emit('chat', msg);
   });
 
+   conn.on('disconnect', function () {
+            //Useful to know when someone disconnects
+        console.log('\t socket.io:: client disconnected ' + conn.userId );
 
-  conn.on('disconnect', function() {
-    if (conn.user_id) {
-      var notif = {
-        ts: Date.now(),
-        sender: "system",
-        receiver: "*",
-        content: conn.user_id + " left the room.",
-      };
-      notif.id = digest(notif.receiver + notif.ts + notif.content);
-      io.emit('notification', notif);
-    }
-  });
+    });
 });
 
 // Listen on a high port.
@@ -83,5 +55,4 @@ var port = 12134;
 server.listen(port, function() {
   console.log("Listening on port " + port);
 });
-
 

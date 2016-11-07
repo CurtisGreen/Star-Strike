@@ -6,6 +6,7 @@ game2 = new Phaser.Game(648, 648, Phaser.CANVAS, 'phaser-example2', { preload: p
 
 
 /*----variables----*/
+var userId = 2;
 var player;
 var cursors;
 
@@ -30,7 +31,12 @@ function preload() {
 }
 
 
-function create() {     //TODO: duplicate for player 2
+function create() {     //called when object is created
+
+    socket.on('onconnected', function(msg){ //get user's unique id
+        console.log('user id = '+ msg.id);
+        userId = msg.id;
+    });
 
     //  This will run in Canvas mode, so let's gain a little speed and display
     game2.renderer.clearBeforeRender = false;
@@ -72,7 +78,7 @@ function create() {     //TODO: duplicate for player 2
     stars.enableBody = true;
     stars.physicsBodyType = Phaser.Physics.ARCADE;
 
-    createStars();
+    createStars();  //create temp stars for collision testing
     
     scoreText = game2.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
     winText = game2.add.text(game2.world.centerX-50, game2.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
@@ -82,23 +88,18 @@ function create() {     //TODO: duplicate for player 2
 
 function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
     game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
-
-   setInterval(function(){
-
-          socket.on('chat', function(msg) {  
-        //console.log('function 2 = '+ msg);
-        player.x = msg.x;
-        player.y = msg.y;
-        player.rotation = msg.rotation;
-        if (msg.fire){
-            fireBullet();
+    
+    socket.on('chat', function(msg) {  //Updates p2 from server
+        //console.log(msg.id);
+        if (msg.id != userId){
+            player.x = msg.x;
+            player.y = msg.y;
+            player.rotation = msg.rotation;
+            if (msg.fire){
+                fireBullet();
+            }
         }
-        });
-
-      
-   
-   
-    },1000);
+    });
 
     screenWrap(player);
 
@@ -186,4 +187,3 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 }
 }
 startGame2();
-//TODO: add collision handling for player & star

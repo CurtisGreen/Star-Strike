@@ -1,6 +1,6 @@
 // Deal with logging in.
 
-function login() {    //TODO: Change for our menu/login
+/*function login() {    //TODO: Change for our menu/login
   var userId = $('#user_id_input').val();
   if (userId && userId != "") {
     socket.emit('login', {
@@ -20,3 +20,4 @@ function login() {    //TODO: Change for our menu/login
   });
 }
 
+*/
