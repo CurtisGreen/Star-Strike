@@ -160,12 +160,12 @@ function render() {
 }
 
 function createStars(){     //TODO: make stars move randomly, starting with 1
-    for (var y = 0; y < 4; y++){
-        for (var x = 0; x < 10; x++){
-            var star = stars.create(x*48, y*50, 'star');
+    //for (var y = 0; y < 4; y++){
+        //for (var x = 0; x < 10; x++){
+            var star = stars.create(48, 50, 'star');
             star.anchor.setTo (0.5,0.5);
-        }
-    }
+        //}
+    //}
 
     stars.x = 100;
     stars.y = 50;
