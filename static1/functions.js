@@ -84,18 +84,17 @@ function create() {     //TODO: duplicate for player 2
 }
 
 function updateP2(){
-    if (count > 25){
+     setInterval(function(){
+
         socket.emit('chat', {
           x: player.x,
           y: player.y,
           rotation: player.rotation,
           fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
         });
-        count = 0;
-    }
-    else{
-        count++;
-    }
+   
+   
+    },1000);
 }
 
 function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
