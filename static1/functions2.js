@@ -83,8 +83,9 @@ function create() {     //TODO: duplicate for player 2
 function update() { //TODO: listen for server commands and do these same things for player 2 rather than from client commands
     game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 
-    if (count > 25){
-        socket.on('chat', function(msg) {  
+   setInterval(function(){
+
+          socket.on('chat', function(msg) {  
         //console.log('function 2 = '+ msg);
         player.x = msg.x;
         player.y = msg.y;
@@ -93,11 +94,11 @@ function update() { //TODO: listen for server commands and do these same things 
             fireBullet();
         }
         });
-        count = 0;
-    }
-    else{
-        count++;
-    }
+
+      
+   
+   
+    },1000);
 
     screenWrap(player);
 
