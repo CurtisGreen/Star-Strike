@@ -108,8 +108,8 @@ function updateP2(){    //update the user's location on the server
 }
 
 function update() { //Called 60 times per second to update the state of the game for the user
-    game.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
-	game.physics.arcade.overlap(player,stars,collisionHandler,null,this);
+    game.physics.arcade.overlap(bullets,stars,bulletCollisionHandler,null,this);
+	game.physics.arcade.overlap(player,stars,playerCollisionHandler,null,this);
 
     if (cursors.up.isDown)
     {
@@ -221,7 +221,7 @@ function descend(){
     stars.y ==10;
 }
 
-function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+function bulletCollisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     bullet.kill();
     star.kill();
 	console.log('collision happened');
@@ -232,7 +232,7 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 	});
     score--;
 }
-function collisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+function playerCollisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     player.kill();
     star.kill();
     score--;
