@@ -2,7 +2,7 @@
 
 function startGame(){   //Called afterwards to ensure game is fully loaded
 
-var game = new Phaser.Game(648,648, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(648,600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 
 /*----variables----*/
@@ -38,6 +38,14 @@ function create() { //creates player1, the one the client controls
         userId = msg.id;
     });
 
+	socket.on('double', function(msg){
+		console.log('msgid = '+msg.id + ' ' + userId + ' p1 doubled' + score);
+		if (msg.check && msg.id != userId && score < 10){
+			createStars();
+			createStars();
+		}
+	});
+	
     //  This will run in Canvas mode, so let's gain a little speed and display
     game.renderer.clearBeforeRender = false;
     game.renderer.roundPixels = true;
@@ -80,7 +88,9 @@ function create() { //creates player1, the one the client controls
     
     scoreText = game.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
     winText = game.add.text(game.world.centerX-50, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
-    winText.visible = false;  
+    winText.visible = false; 
+	loseText = game.add.text(game.world.centerX-50, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
+    loseText.visible = false;
 
 }
 
@@ -93,6 +103,8 @@ function updateP2(){    //update the user's location on the server
 	  rotation: player.rotation,
 	  fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
 	});
+	
+
 }
 
 function update() { //Called 60 times per second to update the state of the game for the user
@@ -133,10 +145,10 @@ function update() { //Called 60 times per second to update the state of the game
 
     bullets.forEachExists(screenWrap, this);
 
-     scoreText.text = 'Stars:' + score;
+    scoreText.text = 'Stars:' + score;
 
-    if(score == 0) {     //TODO: instead of points have it display number stars
-        winText.visible = true;
+    if(score >= 10) {     //TODO: Show victory/defeat to second player
+        loseText.visible = true;
         scoreText.visible = false;
     }
 
@@ -188,8 +200,8 @@ function render() {
 
 function createStars(){     //TODO: make stars move randomly, starting with 1
 
-	var star = stars.create(48, 50, 'star');
-	star.anchor.setTo (0.5,0.5);
+	var star = stars.create(Math.random()*48, Math.random()*50, 'star');
+	star.anchor.setTo (Math.random(),Math.random());
 	score++;
 
     stars.x = 100;
@@ -207,7 +219,12 @@ function descend(){
 function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     bullet.kill();
     star.kill();
-
+	console.log('collision happened');
+	//TODO: increase # of stars for p2
+	socket.emit('double', {
+		check: true,
+		id: userId,
+	});
     score--;
 }
 }

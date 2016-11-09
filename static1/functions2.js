@@ -2,7 +2,7 @@
 
 function startGame2(){  //Called afterwards to ensure game is fully loaded
 
-game2 = new Phaser.Game(648, 648, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
+game2 = new Phaser.Game(648, 600, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
 
 
 /*----variables----*/
@@ -37,6 +37,26 @@ function create() {     //Called when object is created, creates player 2, the o
         console.log('user id = '+ msg.id);
         userId = msg.id;
     });
+	
+	 socket.on('update', function(msg) {  //Updates p2 from server
+        //console.log(msg.id);
+        if (msg.id != userId){
+            player.x = msg.x;
+            player.y = msg.y;
+            player.rotation = msg.rotation;
+            if (msg.fire){
+                fireBullet();
+            }
+        }
+    });
+	
+	socket.on('double', function(msg){
+		console.log('msgid = '+msg.id + ' ' + userId + ' p2 doubled' + score);
+		if (msg.check && msg.id == userId && score < 10){
+			createStars();
+			createStars();
+		}
+	});
 	userId = Math.random();
 	console.log('testerino' + startGame.userId);
 
@@ -47,6 +67,7 @@ function create() {     //Called when object is created, creates player 2, the o
     //  We need arcade physics
     game2.physics.startSystem(Phaser.Physics.ARCADE);
 
+	// Lower player 2's fps so the game doesn't seize up
     game2.desiredFPS = 1;
 
     //  A spacey background
@@ -83,25 +104,17 @@ function create() {     //Called when object is created, creates player 2, the o
     createStars();  //create temp stars for collision testing
     
     scoreText = game2.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
-    winText = game2.add.text(game2.world.centerX-50, game2.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
+    winText = game2.add.text(game2.world.centerX, game2.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
     winText.visible = false;  
+	loseText = game2.add.text(game2.world.centerX, game2.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
+    loseText.visible = false; 
 
 }
 
 function update() {	//Called repeatedly to update the game state
     game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
     
-    socket.on('update', function(msg) {  //Updates p2 from server
-        //console.log(msg.id);
-        if (msg.id != userId){
-            player.x = msg.x;
-            player.y = msg.y;
-            player.rotation = msg.rotation;
-            if (msg.fire){
-                fireBullet();
-            }
-        }
-    });
+   
 
     screenWrap(player);
 
@@ -109,8 +122,8 @@ function update() {	//Called repeatedly to update the game state
 
      scoreText.text = 'Stars:' + score;
 
-    if(score == 0) {     //TODO: instead of points have it display number stars
-        winText.visible = true;
+    if(score >= 10) {     //TODO: show only victory/defeat for the client (player1)
+        loseText.visible = true;
         scoreText.visible = false;
     }
 
@@ -160,13 +173,10 @@ function render() {
 }
 
 function createStars(){     //TODO: make stars move randomly, starting with 1
-    //for (var y = 0; y < 4; y++){
-        //for (var x = 0; x < 10; x++){
-            var star = stars.create(48, 50, 'star');
-            star.anchor.setTo (0.5,0.5);
-            score++;
-        //}
-    //}
+
+	var star = stars.create(Math.random()*48, Math.random()*50, 'star');
+	star.anchor.setTo (Math.random(),Math.random());
+	score++;
 
     stars.x = 100;
     stars.y = 50;

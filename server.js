@@ -41,7 +41,10 @@ io.sockets.on('connection', function(conn) {
   conn.on('update', function(msg) {   //Sends the client data to the server then to the opposing player
       io.emit('update', msg);
   });
-
+  
+  conn.on('double', function(msg) {   //Checks for stars doubling
+      io.emit('double', msg);
+  });
    conn.on('disconnect', function () {
             //Useful to know when someone disconnects
         console.log('\t socket.io:: client disconnected ' + conn.userId );
