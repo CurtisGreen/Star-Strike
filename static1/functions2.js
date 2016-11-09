@@ -15,7 +15,6 @@ var bullets;
 var bulletTime = 0;
 
 var stars;
-var starList;
 var score = 0;
 var scoreText;
 var winText;
@@ -96,7 +95,6 @@ function create() {     //Called when object is created, creates player 2, the o
     cursors = game2.input.keyboard.createCursorKeys();
     game2.input.keyboard.addKeyCapture([ Phaser.Keyboard.Z ]);
 	
-	starList = [];
     stars = game2.add.group();
     stars.enableBody = true;
     stars.physicsBodyType = Phaser.Physics.ARCADE;
@@ -113,7 +111,8 @@ function create() {     //Called when object is created, creates player 2, the o
 
 function update() {	//Called repeatedly to update the game state
     game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
-
+	game2.physics.arcade.overlap(player,stars,collisionHandler,null,this);
+	
     screenWrap(player);
 
     bullets.forEachExists(screenWrap, this);
@@ -170,7 +169,7 @@ function screenWrap (player) {
 function render() {
 }
 
-function createStars(){     //TODO: make stars move randomly, starting with 1
+function createStars(){     //TODO: make stars move randomly, starting with 1, also check for wall boundaries
 
 	this.x = game2.world.randomX;        
 	this.y = game2.world.randomY;        
@@ -178,34 +177,13 @@ function createStars(){     //TODO: make stars move randomly, starting with 1
 	this.maxSpeed = 75;        
 	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
 	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
-	console.log(vy);
 	
 	var star = stars.create(this.x, this.y, 'star');
-	starList.push(star);
 	star.anchor.setTo (.5,.5);
 	score++;
     var tween = game2.add.tween(star).to({x:(this.vx),y: (this.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
 
     tween.onLoop.add(descend,this);
-	
-	////////////////////////
-	/*star = function(){
-		this.x = game2.world.randomX;        
-		this.y = game2.world.randomY;        
-		this.minSpeed = -75;        
-		this.maxSpeed = 75;        
-		this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
-		this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
-		this.starSprite = game2.add.sprite(this.x,this.y,'star');        
-		this.starSprite.anchor.setTo(0.5, 0.5);        
-		this.starSprite.body.collideWorldBounds = true;        
-		this.starSprite.body.bounce.setTo(1, 1);        
-		this.starSprite.body.velocity.x = this.vx;        
-		this.starSprite.body.velocity.y = this.vy;        
-		this.starSprite.body.immovable = true;
-	}
-	stars.push(new star);*/
-	/////////////////////////////
 }
 
 function descend(){
@@ -214,6 +192,12 @@ function descend(){
 
 function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     bullet.kill();
+    star.kill();
+
+    score--;
+}
+function collisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+    player.kill();
     star.kill();
 
     score--;

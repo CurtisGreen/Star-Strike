@@ -89,7 +89,7 @@ function create() { //creates player1, the one the client controls
     scoreText = game.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
     winText = game.add.text(game.world.centerX-50, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
     winText.visible = false; 
-	loseText = game.add.text(game.world.centerX-50, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
+	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
     loseText.visible = false;
 
 }
@@ -109,6 +109,7 @@ function updateP2(){    //update the user's location on the server
 
 function update() { //Called 60 times per second to update the state of the game for the user
     game.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
+	game.physics.arcade.overlap(player,stars,collisionHandler,null,this);
 
     if (cursors.up.isDown)
     {
@@ -200,14 +201,18 @@ function render() {
 
 function createStars(){     //TODO: make stars move randomly, starting with 1
 
-	var star = stars.create(Math.random()*48, Math.random()*50, 'star');
-	star.anchor.setTo (Math.random(),Math.random());
+	this.x = game2.world.randomX;        
+	this.y = game2.world.randomY;        
+	this.minSpeed = -75;        
+	this.maxSpeed = 75;        
+	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
+	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
+	console.log(vy);
+	
+	var star = stars.create(this.x, this.y, 'star');
+	star.anchor.setTo (.5,.5);
 	score++;
-
-    stars.x = 100;
-    stars.y = 50;
-
-    var tween = game.add.tween(stars).to({x:200},2000,Phaser.Easing.Linear.None,true,0,1000,true);
+    var tween = game2.add.tween(star).to({x:(this.vx),y: (this.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
 
     tween.onLoop.add(descend,this);
 }
@@ -226,6 +231,13 @@ function collisionHandler(bullet, star){    //TODO: make destroying stars increa
 		id: userId,
 	});
     score--;
+}
+function collisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+    player.kill();
+    star.kill();
+    score--;
+	loseText.visible = true;
+	scoreText.visible = false;
 }
 }
 
