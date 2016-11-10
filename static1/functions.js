@@ -34,13 +34,12 @@ function preload() {
 function create() { //creates player1, the one the client controls
 
     socket.on('onconnected', function(msg){ //get user's unique id
-        console.log('user id = '+ msg.id);
+        console.log('onconnected: user id = '+ msg.id);
         userId = msg.id;
     });
 
 	socket.on('double', function(msg){
-		console.log('msgid = '+msg.id + ' ' + userId + ' p1 doubled' + score);
-		if (msg.check && msg.id != userId && score < 10){
+		if (msg.check && msg.id != userId && score < 20){
 			createStars();
 			createStars();
 		}
@@ -147,7 +146,7 @@ function update() { //Called 60 times per second to update the state of the game
 
     scoreText.text = 'Stars:' + score;
 
-    if(score >= 10) {     //TODO: Show victory/defeat to second player
+    if(score >= 20) {     //TODO: Show victory/defeat to second player
         loseText.visible = true;
         scoreText.visible = false;
     }
@@ -232,11 +231,13 @@ function descend(){
 function bulletCollisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     bullet.kill();
     star.kill();
-	console.log('collision happened');
-	//TODO: increase # of stars for p2
+
+	var index = Array.prototype.indexOf.call(star.parent.children, star);
 	socket.emit('double', {
 		check: true,
 		id: userId,
+		index: index,
+		score: score,
 	});
     score--;
 }

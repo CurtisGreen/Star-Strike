@@ -34,7 +34,7 @@ function preload() {
 function create() {     //Called when object is created, creates player 2, the one the server controls
 
     socket.on('onconnected', function(msg){ //get user's unique id
-        console.log('user id = '+ msg.id);
+        console.log('onconnected: user id = '+ msg.id);
         userId = msg.id;
     });
 	
@@ -51,17 +51,19 @@ function create() {     //Called when object is created, creates player 2, the o
     });
 	
 	socket.on('stars', function(msg){
-		console.log('id = '+msg.id+' score = '+msg.score);
-		if (msg.id != userId && score < 10){
+		if (msg.id != userId && score < 20){
 			createStars(msg);
 		}
 	});
 	
-	/*socket.on('star', function(msg){
-		if (msg.id == userId && score < 10){
-			
+	socket.on('double', function(msg){
+		console.log('deletion '+ msg.id + ' ' + userId);
+		if (msg.check && msg.id != userId && score < 20){
+			stars.children[msg.index].kill();
+			score = msg.score;
 		}
-	});*/
+	});
+	
     //  This will run in Canvas mode, so let's gain a little speed and display
     game2.renderer.clearBeforeRender = false;
     game2.renderer.roundPixels = true;
@@ -121,7 +123,7 @@ function update() {	//Called repeatedly to update the game state
 
      scoreText.text = 'Stars:' + score;
 
-    if(score >= 10) {     //TODO: show only victory/defeat for the client (player1)
+    if(score >= 20) {     //TODO: show only victory/defeat for the client (player1)
         loseText.visible = true;
         scoreText.visible = false;
     }
@@ -137,10 +139,10 @@ function fireBullet () {    //TODO: change to use server rather than new bullet
         if (bullet)
         {
             bullet.reset(player.body.x + 16, player.body.y + 16);
-            bullet.lifespan = 2000;
+            bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game2.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
-            bulletTime = game2.time.now + 50;
+            bulletTime = game2.time.now + 200;
         }
     }
 
