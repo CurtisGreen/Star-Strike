@@ -103,7 +103,6 @@ function updateP2(){    //update the user's location on the server
 	  rotation: player.rotation,
 	  fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
 	});
-	
 
 }
 
@@ -164,10 +163,10 @@ function fireBullet () {    //shoots lasers in targeted direction
         if (bullet)
         {
             bullet.reset(player.body.x + 16, player.body.y + 16);
-            bullet.lifespan = 2000;
+            bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
-            bulletTime = game.time.now + 50;
+            bulletTime = game.time.now + 200;
         }
     }
 
@@ -215,6 +214,15 @@ function createStars(){     //TODO: make stars move randomly, starting with 1
     var tween = game2.add.tween(star).to({x:(this.vx),y: (this.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
 
     tween.onLoop.add(descend,this);
+	
+	socket.emit('stars', {
+	  id: userId,
+	  x: this.x,
+	  y: this.y,
+	  vx: this.vx,
+	  vy: this.vy,
+	  score: score, 
+	});
 }
 
 function descend(){

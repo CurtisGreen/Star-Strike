@@ -50,14 +50,18 @@ function create() {     //Called when object is created, creates player 2, the o
         }
     });
 	
-	socket.on('double', function(msg){
-		console.log('msgid = '+msg.id + ' ' + userId + ' p2 doubled' + score);
-		if (msg.check && msg.id == userId && score < 10){
-			createStars();
-			createStars();
+	socket.on('stars', function(msg){
+		console.log('id = '+msg.id+' score = '+msg.score);
+		if (msg.id != userId && score < 10){
+			createStars(msg);
 		}
 	});
-
+	
+	/*socket.on('star', function(msg){
+		if (msg.id == userId && score < 10){
+			
+		}
+	});*/
     //  This will run in Canvas mode, so let's gain a little speed and display
     game2.renderer.clearBeforeRender = false;
     game2.renderer.roundPixels = true;
@@ -98,8 +102,6 @@ function create() {     //Called when object is created, creates player 2, the o
     stars = game2.add.group();
     stars.enableBody = true;
     stars.physicsBodyType = Phaser.Physics.ARCADE;
-
-    createStars();  //create temp stars for collision testing
     
     scoreText = game2.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
     winText = game2.add.text(game2.world.centerX, game2.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
@@ -169,19 +171,12 @@ function screenWrap (player) {
 function render() {
 }
 
-function createStars(){     //TODO: make stars move randomly, starting with 1, also check for wall boundaries
-
-	this.x = game2.world.randomX;        
-	this.y = game2.world.randomY;        
-	this.minSpeed = -75;        
-	this.maxSpeed = 75;        
-	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
-	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
+function createStars(msg){     //TODO: make stars move randomly, starting with 1, also check for wall boundaries
 	
-	var star = stars.create(this.x, this.y, 'star');
+	var star = stars.create(msg.x, msg.y, 'star');
 	star.anchor.setTo (.5,.5);
-	score++;
-    var tween = game2.add.tween(star).to({x:(this.vx),y: (this.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
+	score = msg.score;
+    var tween = game2.add.tween(star).to({x:(msg.vx),y: (msg.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
 
     tween.onLoop.add(descend,this);
 }

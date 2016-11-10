@@ -45,6 +45,9 @@ io.sockets.on('connection', function(conn) {
   conn.on('double', function(msg) {   //Checks for stars doubling
       io.emit('double', msg);
   });
+  conn.on('stars', function(msg) {   //Updates stars position 
+      io.emit('stars', msg);
+  });
    conn.on('disconnect', function () {
             //Useful to know when someone disconnects
         console.log('\t socket.io:: client disconnected ' + conn.userId );
