@@ -1,11 +1,19 @@
 * {
-  box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
   font-size: 14pt;
+}
+
+ul,li{
+  
+  margin: 0px;
+  padding: 0px;
+  list-style:none;
 }
 
 .header {
@@ -116,3 +124,61 @@ body {
 	margin-top: -600px;
 	margin-left: 650px;
 }
+
+
+.image{
+    position: relative;
+    width: 100%;
+}
+
+
+#game_title { 
+   font-family: 'Coiny';
+   font-size: 60px;
+   color: #006bb3;
+   position: absolute; 
+   top: 150px; 
+   left: 150px; 
+   width: 100%; 
+}
+
+#options_list{
+  position: absolute;
+  top:275px;
+  left:200px;
+  width: 300px;
+  text-align: center;
+}
+
+.options{
+  font-size: 30px;
+  font-family: 'Coiny';
+  margin-top: 0px;
+}
+
+
+.button1 {
+ 
+    color: black;
+    border: 2px solid #4CAF50;
+}
+
+.opt:hover{
+  color:#cccccc;
+  font-size: 31px;
+    text-shadow: 5px 5px 8px #002db3;
+}
+
+.opt{
+  display: block;
+  font-family: 'Coiny';
+  color:#006bb3;
+  background:none;
+  border:none;
+  text-align: center;
+  text-decoration: none;
+  font-size: 30px;
+  cursor: pointer;
+  width: 300px;
+}
+
