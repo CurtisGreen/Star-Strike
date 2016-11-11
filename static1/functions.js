@@ -13,6 +13,8 @@ var cursors;
 var bullet;
 var bullets;
 var bulletTime = 0;
+var ammo = 7;
+var ammoTime = 0;
 
 var stars;
 var score = 0;
@@ -179,14 +181,20 @@ function fireBullet () {    //shoots lasers in targeted direction
     {
         bullet = bullets.getFirstExists(false);
 
-        if (bullet)
+        if (bullet && ammo > 0)
         {
             bullet.reset(player.body.x + 16, player.body.y + 16);
             bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
             bulletTime = game.time.now + 200;
+			ammo--;
         }
+		else if (ammo <= 0 && game.time.now > ammoTime){
+			console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
+			ammoTime = game2.time.now + 5000;
+			ammo = 7;
+		}
     }
 
 }
