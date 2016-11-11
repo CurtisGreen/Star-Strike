@@ -2,7 +2,7 @@
 
 function startGame(){   //Called afterwards to ensure game is fully loaded
 
-var game = new Phaser.Game(648,600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(648,600, Phaser.CANVAS, 'player_1', { preload: preload, create: create, update: update, render: render });
 
 
 /*----variables----*/
@@ -158,7 +158,12 @@ function update() { //Called 60 times per second to update the state of the game
 
     scoreText.text = 'Stars:' + score;
 
+<<<<<<< HEAD
+
+    if(score >= 20) {     //TODO: Show victory/defeat to second player
+=======
     if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
+>>>>>>> 254fde10779603614d9ae6df7241e97d265c1dd3
         loseText.visible = true;
         scoreText.visible = false;
 		

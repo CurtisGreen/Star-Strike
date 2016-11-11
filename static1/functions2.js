@@ -2,7 +2,7 @@
 
 function startGame2(){  //Called afterwards to ensure game is fully loaded
 
-game2 = new Phaser.Game(648, 600, Phaser.CANVAS, 'phaser-example2', { preload: preload, create: create, update: update, render: render });
+game2 = new Phaser.Game(648, 600, Phaser.CANVAS, 'player_2', { preload: preload, create: create, update: update, render: render });
 
 
 /*----variables----*/
