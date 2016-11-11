@@ -18,6 +18,8 @@ var stars;
 var score = 0;
 var scoreText;
 var winText;
+var defeat = false;
+var victory = false;
 
 var count = 0;
 
@@ -45,6 +47,14 @@ function create() { //creates player1, the one the client controls
 		}
 	});
 	
+	socket.on('defeat', function(msg){
+		if (msg.id != userId && !defeat){
+			winText.visible = true;
+			scoreText.visible = false;
+			victory = true;
+		}
+	});
+	
     //  This will run in Canvas mode, so let's gain a little speed and display
     game.renderer.clearBeforeRender = false;
     game.renderer.roundPixels = true;
@@ -61,7 +71,7 @@ function create() { //creates player1, the one the client controls
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
     //  All 40 of them
-    bullets.createMultiple(40, 'bullet');
+    bullets.createMultiple(7, 'bullet');
     bullets.setAll('anchor.x', 0.5);
     bullets.setAll('anchor.y', 0.5);
 
@@ -86,7 +96,7 @@ function create() { //creates player1, the one the client controls
     createStars();
     
     scoreText = game.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
-    winText = game.add.text(game.world.centerX-50, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
+    winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
     winText.visible = false; 
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
     loseText.visible = false;
@@ -146,17 +156,26 @@ function update() { //Called 60 times per second to update the state of the game
 
     scoreText.text = 'Stars:' + score;
 
+<<<<<<< HEAD
 
     if(score >= 20) {     //TODO: Show victory/defeat to second player
+=======
+    if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
+>>>>>>> 254fde10779603614d9ae6df7241e97d265c1dd3
         loseText.visible = true;
         scoreText.visible = false;
+		
+		socket.emit('defeat', {
+			id: userId,
+			dead: false,
+		});
     }
 
 }
 
 function fireBullet () {    //shoots lasers in targeted direction
 
-    if (game.time.now > bulletTime)
+    if (game.time.now > bulletTime && !defeat)
     {
         bullet = bullets.getFirstExists(false);
 
@@ -246,8 +265,15 @@ function playerCollisionHandler(player, star){    //TODO: make destroying stars 
     player.kill();
     star.kill();
     score--;
-	loseText.visible = true;
-	scoreText.visible = false;
+	if (!victory){
+		defeat = true;
+		loseText.visible = true;
+		scoreText.visible = false;
+		socket.emit('defeat', {
+			id: userId,
+			dead: true,
+		});
+	}
 }
 }
 

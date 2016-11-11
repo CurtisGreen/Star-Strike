@@ -13,11 +13,12 @@ var cursors;
 var bullet;
 var bullets;
 var bulletTime = 0;
+var ammo = 7;
+var ammoTime = 0;
 
 var stars;
 var score = 0;
 var scoreText;
-var winText;
 
 var count = 0;
 
@@ -64,6 +65,12 @@ function create() {     //Called when object is created, creates player 2, the o
 		}
 	});
 	
+	socket.on('defeat', function(msg){
+		if (msg.id != userId && msg.dead){
+			player.kill();
+		}
+	});
+	
     //  This will run in Canvas mode, so let's gain a little speed and display
     game2.renderer.clearBeforeRender = false;
     game2.renderer.roundPixels = true;
@@ -106,27 +113,17 @@ function create() {     //Called when object is created, creates player 2, the o
     stars.physicsBodyType = Phaser.Physics.ARCADE;
     
     scoreText = game2.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
-    winText = game2.add.text(game2.world.centerX, game2.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
-    winText.visible = false;  
-	loseText = game2.add.text(game2.world.centerX, game2.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
-    loseText.visible = false; 
 
 }
 
 function update() {	//Called repeatedly to update the game state
-    game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
-	game2.physics.arcade.overlap(player,stars,collisionHandler,null,this);
+    //game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 	
     screenWrap(player);
 
     bullets.forEachExists(screenWrap, this);
 
      scoreText.text = 'Stars:' + score;
-
-    if(score >= 20) {     //TODO: show only victory/defeat for the client (player1)
-        loseText.visible = true;
-        scoreText.visible = false;
-    }
 
 }
 
@@ -136,14 +133,21 @@ function fireBullet () {    //TODO: change to use server rather than new bullet
     {
         bullet = bullets.getFirstExists(false);
 
-        if (bullet)
+        if (bullet && ammo > 0)
         {
             bullet.reset(player.body.x + 16, player.body.y + 16);
             bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game2.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
             bulletTime = game2.time.now + 200;
+			ammo--;
         }
+		else if (ammo <= 0 && game2.time.now < ammoTime){
+			ammoTime = game2.time.now + 1000;
+			if (game2.time.now >= ammoTime){
+				ammo = 7;
+			}
+		}
     }
 
 }
@@ -187,18 +191,12 @@ function descend(){
     stars.y ==10;
 }
 
-function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+/*function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
     bullet.kill();
     star.kill();
 
     score--;
-}
-function collisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
-    player.kill();
-    star.kill();
-
-    score--;
-}
+}*/
 }
 startGame2();
 
