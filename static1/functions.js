@@ -156,12 +156,12 @@ function update() { //Called 60 times per second to update the state of the game
 
     scoreText.text = 'Stars:' + score;
 
-<<<<<<< HEAD
+
 
     if(score >= 20) {     //TODO: Show victory/defeat to second player
-=======
+
     if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
->>>>>>> 254fde10779603614d9ae6df7241e97d265c1dd3
+
         loseText.visible = true;
         scoreText.visible = false;
 		
@@ -262,6 +262,9 @@ function bulletCollisionHandler(bullet, star){    //TODO: make destroying stars 
     score--;
 }
 function playerCollisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+
+
+
     player.kill();
     star.kill();
     score--;
