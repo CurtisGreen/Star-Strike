@@ -2,7 +2,7 @@
 
 function startGame(){   //Called afterwards to ensure game is fully loaded
 
-var game = new Phaser.Game(648,600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(648,600, Phaser.CANVAS, 'player_1', { preload: preload, create: create, update: update, render: render });
 
 
 /*----variables----*/
@@ -145,6 +145,7 @@ function update() { //Called 60 times per second to update the state of the game
     bullets.forEachExists(screenWrap, this);
 
     scoreText.text = 'Stars:' + score;
+
 
     if(score >= 20) {     //TODO: Show victory/defeat to second player
         loseText.visible = true;
