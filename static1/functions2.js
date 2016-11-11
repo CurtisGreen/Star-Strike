@@ -13,8 +13,6 @@ var cursors;
 var bullet;
 var bullets;
 var bulletTime = 0;
-var ammo = 7;
-var ammoTime = 0;
 
 var stars;
 var score = 0;
@@ -133,21 +131,14 @@ function fireBullet () {    //TODO: change to use server rather than new bullet
     {
         bullet = bullets.getFirstExists(false);
 
-        if (bullet && ammo > 0)
+        if (bullet)
         {
             bullet.reset(player.body.x + 16, player.body.y + 16);
             bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game2.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
             bulletTime = game2.time.now + 200;
-			ammo--;
         }
-		else if (ammo <= 0 && game2.time.now < ammoTime){
-			ammoTime = game2.time.now + 1000;
-			if (game2.time.now >= ammoTime){
-				ammo = 7;
-			}
-		}
     }
 
 }
