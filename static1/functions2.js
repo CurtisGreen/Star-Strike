@@ -16,7 +16,10 @@ var bulletTime = 0;
 
 var stars;
 var score = 0;
+var health = 3;
 var scoreText;
+var healthText;
+
 
 var count = 0;
 
@@ -60,8 +63,15 @@ function create() {     //Called when object is created, creates player 2, the o
 		if (msg.check && msg.id != userId && score < 20){
 			stars.children[msg.index].kill();
 			score = msg.score;
+            
 		}
 	});
+
+    socket.on('health', function(msg){
+        if ( msg.check && msg.id != userId){
+            health = msg.health;
+        }
+    });
 	
 	socket.on('defeat', function(msg){
 		if (msg.id != userId && msg.dead){
@@ -95,6 +105,7 @@ function create() {     //Called when object is created, creates player 2, the o
     //  Our player ship
     player = game2.add.sprite(game2.world.centerX, game2.world.centerY + 200, 'ship');
     player.anchor.set(0.5);
+   
 
     //  and its physics settings
     game2.physics.enable(player, Phaser.Physics.ARCADE);
@@ -110,7 +121,8 @@ function create() {     //Called when object is created, creates player 2, the o
     stars.enableBody = true;
     stars.physicsBodyType = Phaser.Physics.ARCADE;
     
-    scoreText = game2.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
+    scoreText = game2.add.text(0,0,'Score:',{font: '25px Arial',fill: '#fff'});
+    healthText = game2.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#fff'});
 
 }
 
@@ -122,6 +134,7 @@ function update() {	//Called repeatedly to update the game state
     bullets.forEachExists(screenWrap, this);
 
      scoreText.text = 'Stars:' + score;
+     healthText.text = 'Lives:' + health;
 
 }
 

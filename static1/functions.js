@@ -20,8 +20,10 @@ var stars;
 var score = 0;
 var scoreText;
 var winText;
+var healthText;
 var defeat = false;
 var victory = false;
+ //var countDeaths = 0;
 
 var count = 0;
 
@@ -80,6 +82,7 @@ function create() { //creates player1, the one the client controls
     //  Our player ship
     player = game.add.sprite(game.world.centerX, game.world.centerY + 200, 'ship');
     player.anchor.set(0.5);
+    player.health = 3;
 
     //  and its physics settings
     game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -97,7 +100,8 @@ function create() { //creates player1, the one the client controls
 
     createStars();
     
-    scoreText = game.add.text(0,550,'Score:',{font: '32px Arial',fill: '#fff'});
+    scoreText = game.add.text(0,0,'Score:',{font: '25px Arial',fill: '#fff'});
+    healthText = game.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#fff'});
     winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
     winText.visible = false; 
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
@@ -106,7 +110,6 @@ function create() { //creates player1, the one the client controls
 }
 
 function updateP2(){    //update the user's location on the server
-
 	socket.emit('update', {
 	  id: userId,
 	  x: player.x,
@@ -152,24 +155,21 @@ function update() { //Called 60 times per second to update the state of the game
         updateP2();
     }
 
+
+
     screenWrap(player);	//Let the player move from one side of the screen to the next
 
     bullets.forEachExists(screenWrap, this);
 
     scoreText.text = 'Stars:' + score;
+    healthText.text = 'Lives:' + player.health;
 
-<<<<<<< HEAD
-
-
-    if(score >= 20) {     //TODO: Show victory/defeat to second player
 
     if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
 
-=======
-    if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
->>>>>>> edac80760901cd34760d718781654ed0ba522aa0
         loseText.visible = true;
         scoreText.visible = false;
+        healthText.visible = false;
 		
 		socket.emit('defeat', {
 			id: userId,
@@ -275,15 +275,23 @@ function bulletCollisionHandler(bullet, star){    //TODO: make destroying stars 
 }
 function playerCollisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
 
+   if( star.kill()){
+    player.health -= 1;
 
+    socket.emit('health', {
+        check: true,
+        id: userId,
+        health: player.health,
+    });
 
-    player.kill();
-    star.kill();
+   }
     score--;
-	if (!victory){
+	if (!victory && player.health <= 0 ){
+       player.kill();
 		defeat = true;
 		loseText.visible = true;
 		scoreText.visible = false;
+        healthText.visible = false;
 		socket.emit('defeat', {
 			id: userId,
 			dead: true,
