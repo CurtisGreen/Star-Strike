@@ -100,8 +100,9 @@ function create() { //creates player1, the one the client controls
 
     createStars();
     
-    scoreText = game.add.text(0,0,'Score:',{font: '25px Arial',fill: '#fff'});
-    healthText = game.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#fff'});
+    scoreText = game.add.text(0,0,'Score:',{font: '25px Arial',fill: ' #cc0000'});
+    healthText = game.add.text(0,550,'Lives:',{font: '25px Arial',fill: ' #00cc00'});
+    ammoText = game.add.text(520,550,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
     winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
     winText.visible = false; 
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
@@ -163,6 +164,7 @@ function update() { //Called 60 times per second to update the state of the game
 
     scoreText.text = 'Stars:' + score;
     healthText.text = 'Lives:' + player.health;
+    ammoText.text = "Ammo: " + ammo;
 
 
     if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
@@ -193,6 +195,14 @@ function fireBullet () {    //shoots lasers in targeted direction
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
             bulletTime = game.time.now + 200;
 			ammo--;
+
+
+            socket.emit('ammo', {
+            check: true,
+            id: userId,
+            ammo: ammo,
+            });
+
         }
 		else if (ammo <= 0 && game.time.now > ammoTime){
 			console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);

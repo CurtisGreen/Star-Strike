@@ -19,7 +19,8 @@ var score = 0;
 var health = 3;
 var scoreText;
 var healthText;
-
+var ammoText;
+var ammo = 7;
 
 var count = 0;
 
@@ -72,6 +73,12 @@ function create() {     //Called when object is created, creates player 2, the o
             health = msg.health;
         }
     });
+
+    socket.on('ammo', function(msg){
+        if ( msg.check && msg.id != userId){
+            ammo = msg.ammo;
+        }
+    });
 	
 	socket.on('defeat', function(msg){
 		if (msg.id != userId && msg.dead){
@@ -121,8 +128,11 @@ function create() {     //Called when object is created, creates player 2, the o
     stars.enableBody = true;
     stars.physicsBodyType = Phaser.Physics.ARCADE;
     
-    scoreText = game2.add.text(0,0,'Score:',{font: '25px Arial',fill: '#fff'});
-    healthText = game2.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#fff'});
+    scoreText = game2.add.text(0,0,'Score:',{font: '25px Arial',fill: ' #cc0000'});
+    healthText = game2.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#00cc00'});
+      ammoText = game2.add.text(520,550,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
+
+    
 
 }
 
@@ -134,7 +144,10 @@ function update() {	//Called repeatedly to update the game state
     bullets.forEachExists(screenWrap, this);
 
      scoreText.text = 'Stars:' + score;
+       ammoText.text = "Ammo: " + ammo;
      healthText.text = 'Lives:' + health;
+
+
 
 }
 

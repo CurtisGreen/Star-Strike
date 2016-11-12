@@ -27,14 +27,15 @@
     <script src="/socket.io/socket.io.js"></script>
   </head>
 
-  <body>
+  <body >
 
-       <div class="header" style="display:none">
-
-            <div class="title">Star Strike</div>
-      </div
+      
 
    <div class = "wrapper">
+
+     <div class="header" style="display:none">
+            <div class="title">Star Strike</div>
+      </div>
 
       <div class = "image">
          <img src="assets/ba2.png" alt="" height="800" width="1280">
@@ -46,32 +47,36 @@
             <button class = "opt" type="button">QUIT</button>
          </ul> 
       </div>
-    </div>
- <script>
-      $("#button1").click(function(){
-      $(".image").hide();
-      $(".header").show();
-      $("#player_1").show();
-      $("#player_2" ).show();
-      });
-      
-      $( "#button2" ).click(function(){
-      $( ".image").hide();
-      $( ".header").show();
-      $( "#select_ship").show();
-      });
-      
-      $( "#button2" ).click(function(){
-      $( ".image").hide();
-      $( ".header").show();
-      $( "#select_ship").show();
-      });
- </script>
 
-    <div  id = "player_1" style = "display:none" ><script src = functions.js></script></div>
-  <div  id = "player_2" style = display:none ><script src = functions2.js></script></div>
-  <div  id = "select_ship" style = "display:none" ><script src = select_ship.js></script></div>
-    <script src="base.js"></script>
+      <div id = "screens"  style = "display:none" >
+          <div id = "player_1"><script src = functions.js></script></div>
+          <div id = "player_2"  ><script src = functions2.js></script></div>
+      </div>
+
+    </div>
+
+    <script>
+
+        $("#button1").click(function(){
+        $(".image").hide();
+        $(".header").show();
+        $("#screens" ).show();
+
+        });
+        
+        $( "#button2" ).click(function(){
+        $( ".image").hide();
+        $( ".header").show();
+        $( "#select_ship").show();
+        });
+        
+        $( "#button2" ).click(function(){
+        $( ".image").hide();
+        $( ".header").show();
+        $( "#select_ship").show();
+        });
+    </script>
+      <script src="base.js"></script>
 
   </body>
 

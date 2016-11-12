@@ -55,6 +55,10 @@ io.sockets.on('connection', function(conn) {
       io.emit('health', msg);
   });
 
+   conn.on('ammo', function(msg) {   //Updates stars position 
+      io.emit('ammo', msg);
+  })
+
    conn.on('disconnect', function () {
             //Useful to know when someone disconnects
         console.log('\t socket.io:: client disconnected ' + conn.userId );
