@@ -158,12 +158,16 @@ function update() { //Called 60 times per second to update the state of the game
 
     scoreText.text = 'Stars:' + score;
 
+<<<<<<< HEAD
 
 
     if(score >= 20) {     //TODO: Show victory/defeat to second player
 
     if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
 
+=======
+    if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
+>>>>>>> edac80760901cd34760d718781654ed0ba522aa0
         loseText.visible = true;
         scoreText.visible = false;
 		
