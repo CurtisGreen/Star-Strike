@@ -19,6 +19,7 @@ select_ship.prototype = {
      create: function(){  
           game.stage.backgroundColor = "#000044"; 
           game.add.text(game.width / 2, 50, "Select your spaceship", {font: "18px Arial", fill: "#ffffff"}).anchor.set(0.5);
+          game.add.text(game.width / 2, 70, "(You can drag spaceship to select)", {font: "18px Arial", fill: "#ffffff"}).anchor.set(0.5);
           this.scrollingMap = game.add.tileSprite(0, 0, game.width / 2 + colors.length * 90 + 64, game.height, "transp");
           this.scrollingMap.inputEnabled = true;
           this.scrollingMap.input.enableDrag(false);
