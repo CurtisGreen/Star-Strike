@@ -36,6 +36,7 @@ function preload() {
 
 function create() {     //Called when object is created, creates player 2, the one the server controls
 
+    //Set up socket functions
     socket.on('onconnected', function(msg){ //get user's unique id
         console.log('onconnected: user id = '+ msg.id);
         userId = msg.id;
@@ -53,13 +54,7 @@ function create() {     //Called when object is created, creates player 2, the o
         }
     });
 	
-	socket.on('stars', function(msg){
-		if (msg.id != userId && score < 20){
-			createStars(msg);
-		}
-	});
-	
-	socket.on('double', function(msg){
+	socket.on('double', function(msg){ //Deletes that have been destroyed by p2
 		console.log('deletion '+ msg.id + ' ' + userId);
 		if (msg.check && msg.id != userId && score < 20){
 			stars.children[msg.index].kill();
@@ -68,23 +63,29 @@ function create() {     //Called when object is created, creates player 2, the o
 		}
 	});
 
-    socket.on('health', function(msg){
+    socket.on('health', function(msg){  //Updates p2's health
         if ( msg.check && msg.id != userId){
             health = msg.health;
         }
     });
 
-    socket.on('ammo', function(msg){
+    socket.on('ammo', function(msg){    //Updates p2's ammo
         if ( msg.check && msg.id != userId){
             ammo = msg.ammo;
         }
     });
 	
-	socket.on('defeat', function(msg){
+	socket.on('defeat', function(msg){ //Updates whether or not p2 is dead
 		if (msg.id != userId && msg.dead){
 			player.kill();
 		}
 	});
+
+    socket.on('stars', function(msg){   //Copie's p2's stars to the secondary screen
+        if (msg.id != userId && score < 20){
+            createStars(msg);
+        }
+    });
 	
     //  This will run in Canvas mode, so let's gain a little speed and display
     game2.renderer.clearBeforeRender = false;
@@ -124,34 +125,33 @@ function create() {     //Called when object is created, creates player 2, the o
     cursors = game2.input.keyboard.createCursorKeys();
     game2.input.keyboard.addKeyCapture([ Phaser.Keyboard.Z ]);
 	
+    //  create star objects
     stars = game2.add.group();
     stars.enableBody = true;
     stars.physicsBodyType = Phaser.Physics.ARCADE;
     
+    //  On screen text
     scoreText = game2.add.text(0,0,'Score:',{font: '25px Arial',fill: ' #cc0000'});
     healthText = game2.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#00cc00'});
-      ammoText = game2.add.text(520,550,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
+    ammoText = game2.add.text(520,550,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
 
     
 
 }
 
 function update() {	//Called repeatedly to update the game state
-    //game2.physics.arcade.overlap(bullets,stars,collisionHandler,null,this);
 	
     screenWrap(player);
 
     bullets.forEachExists(screenWrap, this);
 
-     scoreText.text = 'Stars:' + score;
-       ammoText.text = "Ammo: " + ammo;
-     healthText.text = 'Lives:' + health;
-
-
+    scoreText.text = 'Stars:' + score;
+    ammoText.text = "Ammo: " + ammo;
+    healthText.text = 'Lives:' + health;
 
 }
 
-function fireBullet () {    //TODO: change to use server rather than new bullet
+function fireBullet () {    //Fires when p2 presses 'z'
 
     if (game2.time.now > bulletTime)
     {
@@ -163,13 +163,13 @@ function fireBullet () {    //TODO: change to use server rather than new bullet
             bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game2.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
-            bulletTime = game2.time.now + 200;
+            bulletTime = game2.time.now + 200;  //Limit how many lasers will be fired per second
         }
     }
 
 }
 
-function screenWrap (player) {  
+function screenWrap (player) {  //Player can move from one side to the other
 
     if (player.x < 0)
     {
@@ -194,8 +194,8 @@ function screenWrap (player) {
 function render() {
 }
 
-function createStars(msg){     //TODO: make stars move randomly, starting with 1, also check for wall boundaries
-	
+function createStars(msg){     //Stars spawn in a random location and move at a random speed between 2 points
+	//TODO: improve star movement (not just moving back and forth)
 	var star = stars.create(msg.x, msg.y, 'star');
 	star.anchor.setTo (.5,.5);
 	score = msg.score;
@@ -207,13 +207,6 @@ function createStars(msg){     //TODO: make stars move randomly, starting with 1
 function descend(){
     stars.y ==10;
 }
-
-/*function collisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
-    bullet.kill();
-    star.kill();
-
-    score--;
-}*/
 }
 startGame2();
 

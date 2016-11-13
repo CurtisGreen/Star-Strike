@@ -27,8 +27,8 @@ var victory = false;
 
 var count = 0;
 
-function preload() {
-    //all image files are in 'assets' folder
+function preload() {    //all image files are in 'assets' folder
+
     game.load.image('universe', 'assets/universe.png');
     game.load.image('bullet', 'assets/bullets.png');
     game.load.image('ship', 'assets/ship.png');
@@ -239,7 +239,7 @@ function screenWrap (player) {  //let the user fly off the screen back to the ot
 function render() {
 }
 
-function createStars(){     //TODO: make stars move randomly, starting with 1
+function createStars(){     //Creates stars that move randomly
 
 	this.x = game2.world.randomX;        
 	this.y = game2.world.randomY;        
@@ -247,7 +247,6 @@ function createStars(){     //TODO: make stars move randomly, starting with 1
 	this.maxSpeed = 75;        
 	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
 	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
-	console.log(vy);
 	
 	var star = stars.create(this.x, this.y, 'star');
 	star.anchor.setTo (.5,.5);
@@ -256,7 +255,7 @@ function createStars(){     //TODO: make stars move randomly, starting with 1
 
     tween.onLoop.add(descend,this);
 	
-	socket.emit('stars', {
+	socket.emit('stars', { //Send new star info to server
 	  id: userId,
 	  x: this.x,
 	  y: this.y,
@@ -270,12 +269,14 @@ function descend(){
     stars.y ==10;
 }
 
-function bulletCollisionHandler(bullet, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+function bulletCollisionHandler(bullet, star){   //Destroys stars & bullets on intersection
+    //TODO: make destroying stars increase powerup count
+
     bullet.kill();
     star.kill();
 
 	var index = Array.prototype.indexOf.call(star.parent.children, star);
-	socket.emit('double', {
+	socket.emit('double', {    //Tell p2 that a star has been destroyed
 		check: true,
 		id: userId,
 		index: index,
@@ -283,7 +284,7 @@ function bulletCollisionHandler(bullet, star){    //TODO: make destroying stars 
 	});
     score--;
 }
-function playerCollisionHandler(player, star){    //TODO: make destroying stars increase powerup count, also make score display # of stars
+function playerCollisionHandler(player, star){  //Player loses health or dies when player & stars intersect
 
    if( star.kill()){
     player.health -= 1;
@@ -297,15 +298,16 @@ function playerCollisionHandler(player, star){    //TODO: make destroying stars 
    }
     score--;
 	if (!victory && player.health <= 0 ){
-       player.kill();
-		defeat = true;
-		loseText.visible = true;
-		scoreText.visible = false;
+        player.kill();
+        defeat = true;
+        loseText.visible = true;
+        scoreText.visible = false;
         healthText.visible = false;
-		socket.emit('defeat', {
-			id: userId,
-			dead: true,
-		});
+
+        socket.emit('defeat', {
+        id: userId,
+        dead: true,
+        });
 	}
 }
 }
