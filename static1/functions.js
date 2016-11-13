@@ -153,7 +153,7 @@ function update() { //Called 60 times per second to update the state of the game
     if (game.input.keyboard.isDown(Phaser.Keyboard.Z))
     {
         fireBullet();
-        updateP2();
+        updateP2(); //TODO: update player shooting only when not reloading
     }
 
 
@@ -167,13 +167,13 @@ function update() { //Called 60 times per second to update the state of the game
     ammoText.text = "Ammo: " + ammo;
 
 
-    if(score >= 20 && !victory) {     //TODO: Show victory/defeat to second player
+    if(score >= 20 && !victory) {   //Show defeat text
 
         loseText.visible = true;
         scoreText.visible = false;
         healthText.visible = false;
 		
-		socket.emit('defeat', {
+		socket.emit('defeat', {   //Tell server you lost
 			id: userId,
 			dead: false,
 		});
@@ -183,28 +183,27 @@ function update() { //Called 60 times per second to update the state of the game
 
 function fireBullet () {    //shoots lasers in targeted direction
 
-    if (game.time.now > bulletTime && !defeat)
+    if (game.time.now > bulletTime && !defeat)  //Limit shots per second
     {
         bullet = bullets.getFirstExists(false);
 
-        if (bullet && ammo > 0)
+        if (bullet && ammo > 0) //Shoot 7 times then set timeout on shooting
         {
             bullet.reset(player.body.x + 16, player.body.y + 16);
             bullet.lifespan = 1500;
             bullet.rotation = player.rotation;
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
-            bulletTime = game.time.now + 200;
+            bulletTime = game.time.now + 200; 
 			ammo--;
 
-
-            socket.emit('ammo', {
-            check: true,
-            id: userId,
-            ammo: ammo,
+            socket.emit('ammo', {   //Update ammo on p2's screen
+                check: true,
+                id: userId,
+                ammo: ammo,
             });
 
         }
-		else if (ammo <= 0 && game.time.now > ammoTime){
+		else if (ammo <= 0 && game.time.now > ammoTime){  //Enough time has passed to reload
 			console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
 			ammoTime = game2.time.now + 5000;
 			ammo = 7;
@@ -241,6 +240,7 @@ function render() {
 
 function createStars(){     //Creates stars that move randomly
 
+    //Ranxomize star movement
 	this.x = game2.world.randomX;        
 	this.y = game2.world.randomY;        
 	this.minSpeed = -75;        
@@ -248,6 +248,7 @@ function createStars(){     //Creates stars that move randomly
 	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
 	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
 	
+    //Create star from properties above
 	var star = stars.create(this.x, this.y, 'star');
 	star.anchor.setTo (.5,.5);
 	score++;
@@ -286,7 +287,7 @@ function bulletCollisionHandler(bullet, star){   //Destroys stars & bullets on i
 }
 function playerCollisionHandler(player, star){  //Player loses health or dies when player & stars intersect
 
-   if( star.kill()){
+   if( star.kill()){    //Player was damaged by a star
     player.health -= 1;
 
     socket.emit('health', {
@@ -297,16 +298,16 @@ function playerCollisionHandler(player, star){  //Player loses health or dies wh
 
    }
     score--;
-	if (!victory && player.health <= 0 ){
+	if (!victory && player.health <= 0 ){  //Player lost all their health
         player.kill();
         defeat = true;
         loseText.visible = true;
         scoreText.visible = false;
         healthText.visible = false;
 
-        socket.emit('defeat', {
-        id: userId,
-        dead: true,
+        socket.emit('defeat', { //Tell server you died
+            id: userId,
+            dead: true,
         });
 	}
 }
