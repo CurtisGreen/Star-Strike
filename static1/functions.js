@@ -16,6 +16,8 @@ var bulletTime = 0;
 var ammo = 7;
 var ammoTime = 0;
 
+var stats;
+
 var stars;
 var score = 0;
 var scoreText;
@@ -100,6 +102,7 @@ function create() { //creates player1, the one the client controls
 
     createStars();
     
+    //  Victory/defeat text
     scoreText = game.add.text(0,0,'Score:',{font: '25px Arial',fill: ' #cc0000'});
     healthText = game.add.text(0,550,'Lives:',{font: '25px Arial',fill: ' #00cc00'});
     ammoText = game.add.text(520,550,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
@@ -107,6 +110,9 @@ function create() { //creates player1, the one the client controls
     winText.visible = false; 
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
     loseText.visible = false;
+
+    //  Post-game stats
+    stats = {shotsFired: 0, shotsHit: 0};
 
 }
 
@@ -195,6 +201,7 @@ function fireBullet () {    //shoots lasers in targeted direction
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
             bulletTime = game.time.now + 200; 
 			ammo--;
+            stats.shotsFired++;
 
             socket.emit('ammo', {   //Update ammo on p2's screen
                 check: true,
@@ -204,7 +211,7 @@ function fireBullet () {    //shoots lasers in targeted direction
 
         }
 		else if (ammo <= 0 && game.time.now > ammoTime){  //Enough time has passed to reload
-			console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
+			//console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
 			ammoTime = game2.time.now + 5000;
 			ammo = 7;
 		}
@@ -240,7 +247,7 @@ function render() {
 
 function createStars(){     //Creates stars that move randomly
 
-    //Ranxomize star movement
+    //Randomize star movement
 	this.x = game2.world.randomX;        
 	this.y = game2.world.randomY;        
 	this.minSpeed = -75;        
@@ -284,6 +291,8 @@ function bulletCollisionHandler(bullet, star){   //Destroys stars & bullets on i
 		score: score,
 	});
     score--;
+    stats.shotsHit++;
+    console.log('Stars destroyed: ' + stats.shotsHit + ' Hit percentage: ' + stats.shotsHit/stats.shotsFired*100 + '%');
 }
 function playerCollisionHandler(player, star){  //Player loses health or dies when player & stars intersect
 

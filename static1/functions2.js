@@ -55,7 +55,6 @@ function create() {     //Called when object is created, creates player 2, the o
     });
 	
 	socket.on('double', function(msg){ //Deletes that have been destroyed by p2
-		console.log('deletion '+ msg.id + ' ' + userId);
 		if (msg.check && msg.id != userId && score < 20){
 			stars.children[msg.index].kill();
 			score = msg.score;
