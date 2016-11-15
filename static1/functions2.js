@@ -21,6 +21,8 @@ var scoreText;
 var healthText;
 var ammoText;
 var ammo = 7;
+var shipCollideInvader = false;
+var invader;
 
 var count = 0;
 
@@ -29,7 +31,7 @@ function preload() {
     game2.load.image('universe', 'assets/universe.png');
     game2.load.image('bullet', 'assets/bullets.png');
     game2.load.image('ship', 'assets/ship.png');
-    game2.load.image('star', 'assets/star.png');
+    game2.load.image('invader', 'assets/invader.png');
 
 }
 
@@ -65,6 +67,9 @@ function create() {     //Called when object is created, creates player 2, the o
     socket.on('health', function(msg){  //Updates p2's health
         if ( msg.check && msg.id != userId){
             health = msg.health;
+            shipCollideInvader = msg.shipCollideInvader;
+            killInvader();
+
         }
     });
 
@@ -192,15 +197,22 @@ function screenWrap (player) {  //Player can move from one side to the other
 
 function render() {
 }
+function killInvader(){
+    if(shipCollideInvader){
+        invader.kill();
+    }
+}
+ 
 
 function createStars(msg){     //Stars spawn in a random location and move at a random speed between 2 points
 	//TODO: improve star movement (not just moving back and forth)
-	var star = stars.create(msg.x, msg.y, 'star');
-	star.anchor.setTo (.5,.5);
+	invader = stars.create(msg.x, msg.y, 'invader');
+	invader.anchor.setTo (.5,.5);
 	score = msg.score;
-    var tween = game2.add.tween(star).to({x:(msg.vx),y: (msg.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
-
+    var tween = game2.add.tween(invader).to({x:(msg.vx),y: (msg.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
     tween.onLoop.add(descend,this);
+
+   
 }
 
 function descend(){
