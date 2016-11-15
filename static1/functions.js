@@ -252,9 +252,19 @@ function render() {
 
 function createStars(){     //Creates stars that move randomly
 
+    var intersect = false;
+
+    while (!intersect){     //This loop verifies the star will not spawn too close to the user
+        //Randomize star position
+        this.x = game2.world.randomX;        
+        this.y = game2.world.randomY;
+
+        if ( ((this.x > player.x + 20) || (this.x < player.x - 20)) && ((this.y > player.y + 20) || (this.y < player.y - 20)) ){
+            intersect = true;
+        }
+    }
+
     //Randomize star movement
-	this.x = game2.world.randomX;        
-	this.y = game2.world.randomY;        
 	this.minSpeed = -75;        
 	this.maxSpeed = 75;        
 	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
