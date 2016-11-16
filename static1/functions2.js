@@ -146,9 +146,10 @@ function create() {     //Called when object is created, creates player 2, the o
     invaders.physicsBodyType = Phaser.Physics.ARCADE;
     
     //  On screen text
-    scoreText = game2.add.text(0,0,'Score:',{font: '20px Coiny',fill: ' #cc0000'});
+    scoreText = game2.add.text(0,0,'Score:',{font: '20px Coiny',fill: ' #7FBF7F'});
     healthText = game2.add.text(0,570,'Lives',{font: '15px Coiny',fill: ' #00cc00'});
     ammoText = game2.add.text(585,570,'Ammo',{font: '15px Coiny',fill: ' #cc0000'});
+
 
 
     //  explosion
@@ -188,8 +189,7 @@ function update() {	//Called repeatedly to update the game state
 
     bullets.forEachExists(screenWrap, this);
 
-    scoreText.text = 'Stars:' + score;
-   
+    scoreText.text = 'Invaders:' + score;
 
 }
 

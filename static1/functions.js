@@ -13,7 +13,7 @@ var cursors;
 var bullet;
 var bullets;
 var bulletTime = 0;
-var ammo = 7;
+var ammo = 15;
 var ammoImage;
 var liveImage;
 var stateText;
@@ -32,6 +32,7 @@ var defeat = false;
 var victory = false;
 var shipCollideInvader = false;
  //var countDeaths = 0;
+var shipText;
 
 var count = 0;
 
@@ -112,12 +113,16 @@ function create() { //creates player1, the one the client controls
     createInvaders();
     
     //  Victory/defeat text
-    scoreText = game.add.text(0,0,'Score:',{font: '20px Coiny',fill: ' #cc0000'});
+    scoreText = game.add.text(0,0,'Score:',{font: '20px Coiny',fill: ' #7FBF7F'});
     healthText = game.add.text(0,570,'Lives',{font: '15px Coiny',fill: ' #00cc00'});
     ammoText = game.add.text(585,570,'Ammo',{font: '15px Coiny',fill: ' #cc0000'});
-    winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
+	shipText = game.add.text(90,20,'You killed 10 invaders! You now have Unlimited ammo!',{font: '20px Coiny',fill: ' #7FBF7F'});
+	shipText.visible = false;
+	
+	
+    winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '40px Coiny',fill: '#329932'});
     winText.visible = false; 
-	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
+	loseText = game.add.text(game.world.centerX, game.world.centerY, 'You Lose!', {font: '40px Coiny',fill: '#E50000'});
     loseText.visible = false;
 
      //  explosion
@@ -128,8 +133,8 @@ function create() { //creates player1, the one the client controls
 
     // ammo
     ammoImage = game.add.group();
-    for (var i = 0; i < 7; i++) {
-        var allammo = ammoImage.create(605, game.world.height - 90 + (10 * i), 'ammo');
+    for (var i = 0; i < ammo; i++) {
+        var allammo = ammoImage.create(605, game.world.height - 150 + (10 * i), 'ammo');
         allammo.anchor.setTo(0.5, 0.5);
         allammo.angle = 0;
 
@@ -252,7 +257,7 @@ function fireBullet () {    //shoots lasers in targeted direction
         }
 		else if (ammo <= 0 && game.time.now > ammoTime){  //Enough time has passed to reload
 			//console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
-			ammoTime = game2.time.now + 5000;
+			ammoTime = game.time.now + 5000;
 			ammo = 7;
             ammoImage.callAll('revive');
 
@@ -351,6 +356,20 @@ function bulletCollisionHandler(bullet, invader){   //Destroys invader & bullets
     score--;
     stats.shotsHit++;
     console.log('Invaders destroyed: ' + stats.shotsHit + ' Hit percentage: ' + stats.shotsHit/stats.shotsFired*100 + '%');
+	if(stats.shotsHit == 10)
+	{
+		
+		shipText.visible = true; 
+		
+	
+    
+	}
+	if(stats.shotsHit == 15)
+	{
+		shipText.visible = false; 
+	}
+	
+	
 }
 function playerCollisionHandler(player, invader){  //Player loses health or dies when player & invaders intersect
 
@@ -361,6 +380,7 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
     player.health -= 1;
     shipCollideInvader = true;
     liveImage.getFirstAlive().kill();
+	
 
     socket.emit('health', {
         check: true,
@@ -384,6 +404,7 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
             dead: true,
         });
 	}
+	
 }
 }
 
