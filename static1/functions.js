@@ -57,8 +57,8 @@ function create() { //creates player1, the one the client controls
 
 	socket.on('double', function(msg){
 		if (msg.check && msg.id != userId && score < 20){
-			createStars();
-			createStars();
+			createInvaders();
+			createInvaders();
 		}
 	});
 	
@@ -207,7 +207,7 @@ function update() { //Called 60 times per second to update the state of the game
 
     bullets.forEachExists(screenWrap, this);
 
-    scoreText.text = 'Stars:' + score;
+    scoreText.text = 'Invaders:' + score;
    
 
     if(score >= 20 && !victory) {   //Show defeat text
@@ -289,12 +289,12 @@ function screenWrap (player) {  //let the user fly off the screen back to the ot
 function render() {
 }
 
-function createInvaders(){     //Creates stars that move randomly
+function createInvaders(){     //Creates invaders that move randomly
 
     var intersect = false;
 
-    while (!intersect){     //This loop verifies the star will not spawn too close to the user
-        //Randomize star position
+    while (!intersect){     //This loop verifies the invader will not spawn too close to the user
+        //Randomize invader position
         this.x = game2.world.randomX;        
         this.y = game2.world.randomY;
 
@@ -303,13 +303,13 @@ function createInvaders(){     //Creates stars that move randomly
         }
     }
 
-    //Randomize star movement
+    //Randomize invader movement
 	this.minSpeed = -75;        
 	this.maxSpeed = 75;        
 	this.vx = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;        
 	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
 	
-    //Create star from properties above
+    //Create invader from properties above
 	var invader = invaders.create(this.x, this.y, 'invader');
 	invader.anchor.setTo (.5,.5);
 	score++;
@@ -317,7 +317,7 @@ function createInvaders(){     //Creates stars that move randomly
 
     tween.onLoop.add(descend,this);
 	
-	socket.emit('invaders', { //Send new star info to server
+	socket.emit('invaders', { //Send new invader info to server
 	  id: userId,
 	  x: this.x,
 	  y: this.y,
@@ -331,7 +331,7 @@ function descend(){
     invaders.y ==10;
 }
 
-function bulletCollisionHandler(bullet, invader){   //Destroys stars & bullets on intersection
+function bulletCollisionHandler(bullet, invader){   //Destroys invader & bullets on intersection
     //TODO: make destroying invaders increase powerup count
 
     bullet.kill();
@@ -342,7 +342,7 @@ function bulletCollisionHandler(bullet, invader){   //Destroys stars & bullets o
     explosion.play('explode', 30, false, true);
 
 	var index = Array.prototype.indexOf.call(invader.parent.children, invader);
-	socket.emit('double', {    //Tell p2 that a star has been destroyed
+	socket.emit('double', {    //Tell p2 that an invader has been destroyed
 		check: true,
 		id: userId,
 		index: index,
@@ -350,14 +350,14 @@ function bulletCollisionHandler(bullet, invader){   //Destroys stars & bullets o
 	});
     score--;
     stats.shotsHit++;
-    console.log('Stars destroyed: ' + stats.shotsHit + ' Hit percentage: ' + stats.shotsHit/stats.shotsFired*100 + '%');
+    console.log('Invaders destroyed: ' + stats.shotsHit + ' Hit percentage: ' + stats.shotsHit/stats.shotsFired*100 + '%');
 }
 function playerCollisionHandler(player, invader){  //Player loses health or dies when player & invaders intersect
 
    if( invader.kill()){  
     var explosion = explosions.getFirstExists(false);
     explosion.reset(invader.body.x, invader.body.y);
-    explosion.play('explode', 30, false, true);  //Player was damaged by a star
+    explosion.play('explode', 30, false, true);  //Player was damaged by an invader
     player.health -= 1;
     shipCollideInvader = true;
     liveImage.getFirstAlive().kill();
