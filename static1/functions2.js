@@ -56,6 +56,7 @@ function create() {     //Called when object is created, creates player 2, the o
             player.rotation = msg.rotation;
             if (msg.fire){
                 fireBullet();
+
             }
         }
     });
@@ -82,6 +83,10 @@ function create() {     //Called when object is created, creates player 2, the o
         if ( msg.check && msg.id != userId){
             ammo = msg.ammo;
             ammoImage.getFirstAlive().kill();
+            if(ammo <= 0  ){
+                 ammoImage.callAll('revive');
+            }
+           
         }
     });
 	
