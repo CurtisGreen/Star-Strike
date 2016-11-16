@@ -14,13 +14,16 @@ var bullet;
 var bullets;
 var bulletTime = 0;
 var ammo = 7;
+var ammoImage;
+var liveImage;
+var stateText;
 var ammoTime = 0;
 
 var stats;
 
 var explosion;
 
-var stars;
+var invaders;
 var score = 0;
 var scoreText;
 var winText;
@@ -39,6 +42,8 @@ function preload() {    //all image files are in 'assets' folder
     game.load.image('ship', 'assets/ship.png');
     game.load.image('invader', 'assets/invader.png');
     game.load.spritesheet('explode', 'assets/explode.png', 128, 128);
+    game.load.image('ammo', 'assets/ammo.png');
+     game.load.image('live_image', 'assets/i_live.png');
 
 }
 
@@ -100,16 +105,16 @@ function create() { //creates player1, the one the client controls
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.Z ]);
 
-    stars = game.add.group();
-    stars.enableBody = true;
-    stars.physicsBodyType = Phaser.Physics.ARCADE;
+    invaders = game.add.group();
+    invaders.enableBody = true;
+    invaders.physicsBodyType = Phaser.Physics.ARCADE;
 
-    createStars();
+    createInvaders();
     
     //  Victory/defeat text
-    scoreText = game.add.text(0,0,'Score:',{font: '25px Arial',fill: ' #cc0000'});
-    healthText = game.add.text(0,570,'Lives:',{font: '25px Arial',fill: ' #00cc00'});
-    ammoText = game.add.text(520,570,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
+    scoreText = game.add.text(0,0,'Score:',{font: '20px Coiny',fill: ' #cc0000'});
+    healthText = game.add.text(0,570,'Lives',{font: '15px Coiny',fill: ' #00cc00'});
+    ammoText = game.add.text(585,570,'Ammo',{font: '15px Coiny',fill: ' #cc0000'});
     winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '32px Arial',fill: '#fff'});
     winText.visible = false; 
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
@@ -119,6 +124,24 @@ function create() { //creates player1, the one the client controls
     explosions = game.add.group();
     explosions.createMultiple(30, 'explode');
     explosions.forEach(setupInvader, this);
+
+
+    // ammo
+    ammoImage = game.add.group();
+    for (var i = 0; i < 7; i++) {
+        var allammo = ammoImage.create(605, game.world.height - 90 + (10 * i), 'ammo');
+        allammo.anchor.setTo(0.5, 0.5);
+        allammo.angle = 0;
+
+    }
+
+    //lives
+    liveImage = game.add.group();
+    for (var i = 0; i < 3; i++) {
+        var lives = liveImage.create(20, game.world.height - 50 + (10 * i), 'live_image');
+        lives.anchor.setTo(0.5, 0.5);
+        lives.angle = 0;
+    }
 
     //  Post-game stats
     stats = {shotsFired: 0, shotsHit: 0};
@@ -137,7 +160,6 @@ function updateP2(){    //update the user's location on the server
 }
 
 function setupInvader (invader) {
-
     invader.anchor.x = 0.5;
     invader.anchor.y = 0.5;
     invader.animations.add('explode');
@@ -145,8 +167,8 @@ function setupInvader (invader) {
 }
 
 function update() { //Called 60 times per second to update the state of the game for the user
-    game.physics.arcade.overlap(bullets,stars,bulletCollisionHandler,null,this);
-	game.physics.arcade.overlap(player,stars,playerCollisionHandler,null,this);
+    game.physics.arcade.overlap(bullets,invaders,bulletCollisionHandler,null,this);
+	game.physics.arcade.overlap(player,invaders,playerCollisionHandler,null,this);
 
     if (cursors.up.isDown)
     {
@@ -186,13 +208,7 @@ function update() { //Called 60 times per second to update the state of the game
     bullets.forEachExists(screenWrap, this);
 
     scoreText.text = 'Stars:' + score;
-    healthText.text = 'Lives:' + player.health;
-
-    for(var i = 0; i < 5; i++){
-
-    }
-    ammoText.text = "Ammo " + "|" + "|"+"|";
-
+   
 
     if(score >= 20 && !victory) {   //Show defeat text
 
@@ -222,6 +238,9 @@ function fireBullet () {    //shoots lasers in targeted direction
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
             bulletTime = game.time.now + 200; 
 			ammo--;
+
+            ammoImage.getFirstAlive().kill();
+        
             stats.shotsFired++;
 
             socket.emit('ammo', {   //Update ammo on p2's screen
@@ -235,8 +254,12 @@ function fireBullet () {    //shoots lasers in targeted direction
 			//console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
 			ammoTime = game2.time.now + 5000;
 			ammo = 7;
+            ammoImage.callAll('revive');
+
 		}
     }
+
+     
 
 }
 
@@ -266,7 +289,7 @@ function screenWrap (player) {  //let the user fly off the screen back to the ot
 function render() {
 }
 
-function createStars(){     //Creates stars that move randomly
+function createInvaders(){     //Creates stars that move randomly
 
     var intersect = false;
 
@@ -287,14 +310,14 @@ function createStars(){     //Creates stars that move randomly
 	this.vy = Math.random()*(this.maxSpeed - this.minSpeed+1)-this.minSpeed;  
 	
     //Create star from properties above
-	var invader = stars.create(this.x, this.y, 'invader');
+	var invader = invaders.create(this.x, this.y, 'invader');
 	invader.anchor.setTo (.5,.5);
 	score++;
     var tween = game2.add.tween(invader).to({x:(this.vx),y: (this.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
 
     tween.onLoop.add(descend,this);
 	
-	socket.emit('stars', { //Send new star info to server
+	socket.emit('invaders', { //Send new star info to server
 	  id: userId,
 	  x: this.x,
 	  y: this.y,
@@ -305,11 +328,11 @@ function createStars(){     //Creates stars that move randomly
 }
 
 function descend(){
-    stars.y ==10;
+    invaders.y ==10;
 }
 
 function bulletCollisionHandler(bullet, invader){   //Destroys stars & bullets on intersection
-    //TODO: make destroying stars increase powerup count
+    //TODO: make destroying invaders increase powerup count
 
     bullet.kill();
     invader.kill();
@@ -329,11 +352,15 @@ function bulletCollisionHandler(bullet, invader){   //Destroys stars & bullets o
     stats.shotsHit++;
     console.log('Stars destroyed: ' + stats.shotsHit + ' Hit percentage: ' + stats.shotsHit/stats.shotsFired*100 + '%');
 }
-function playerCollisionHandler(player, invader){  //Player loses health or dies when player & stars intersect
+function playerCollisionHandler(player, invader){  //Player loses health or dies when player & invaders intersect
 
-   if( invader.kill()){    //Player was damaged by a star
+   if( invader.kill()){  
+    var explosion = explosions.getFirstExists(false);
+    explosion.reset(invader.body.x, invader.body.y);
+    explosion.play('explode', 30, false, true);  //Player was damaged by a star
     player.health -= 1;
     shipCollideInvader = true;
+    liveImage.getFirstAlive().kill();
 
     socket.emit('health', {
         check: true,

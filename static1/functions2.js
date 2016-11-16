@@ -9,18 +9,19 @@ game2 = new Phaser.Game(648, 600, Phaser.CANVAS, 'player_2', { preload: preload,
 var userId = 2;
 var player;
 var cursors;
-
 var bullet;
 var bullets;
 var bulletTime = 0;
-
-var stars;
+var explosion;
+var invaders;
 var score = 0;
 var health = 3;
 var scoreText;
 var healthText;
 var ammoText;
 var ammo = 7;
+var ammoImage;
+var liveImage;
 var shipCollideInvader = false;
 var invader;
 
@@ -32,6 +33,9 @@ function preload() {
     game2.load.image('bullet', 'assets/bullets.png');
     game2.load.image('ship', 'assets/ship.png');
     game2.load.image('invader', 'assets/invader.png');
+    game2.load.spritesheet('explode', 'assets/explode.png', 128, 128);
+    game2.load.image('ammo', 'assets/ammo.png');
+    game2.load.image('live_image','assets/i_live.png');
 
 }
 
@@ -58,7 +62,7 @@ function create() {     //Called when object is created, creates player 2, the o
 	
 	socket.on('double', function(msg){ //Deletes that have been destroyed by p2
 		if (msg.check && msg.id != userId && score < 20){
-			stars.children[msg.index].kill();
+			invaders.children[msg.index].kill();
 			score = msg.score;
             
 		}
@@ -69,6 +73,7 @@ function create() {     //Called when object is created, creates player 2, the o
             health = msg.health;
             shipCollideInvader = msg.shipCollideInvader;
             killInvader();
+             liveImage.getFirstAlive().kill();
 
         }
     });
@@ -76,6 +81,7 @@ function create() {     //Called when object is created, creates player 2, the o
     socket.on('ammo', function(msg){    //Updates p2's ammo
         if ( msg.check && msg.id != userId){
             ammo = msg.ammo;
+            ammoImage.getFirstAlive().kill();
         }
     });
 	
@@ -85,7 +91,7 @@ function create() {     //Called when object is created, creates player 2, the o
 		}
 	});
 
-    socket.on('stars', function(msg){   //Copie's p2's stars to the secondary screen
+    socket.on('invaders', function(msg){   //Copie's p2's stars to the secondary screen
         if (msg.id != userId && score < 20){
             createStars(msg);
         }
@@ -129,17 +135,45 @@ function create() {     //Called when object is created, creates player 2, the o
     cursors = game2.input.keyboard.createCursorKeys();
     game2.input.keyboard.addKeyCapture([ Phaser.Keyboard.Z ]);
 	
-    //  create star objects
-    stars = game2.add.group();
-    stars.enableBody = true;
-    stars.physicsBodyType = Phaser.Physics.ARCADE;
+    //  create invaders objects
+    invaders = game2.add.group();
+    invaders.enableBody = true;
+    invaders.physicsBodyType = Phaser.Physics.ARCADE;
     
     //  On screen text
-    scoreText = game2.add.text(0,0,'Score:',{font: '25px Arial',fill: ' #cc0000'});
-    healthText = game2.add.text(0,550,'Lives:',{font: '25px Arial',fill: '#00cc00'});
-    ammoText = game2.add.text(520,550,'Ammo:',{font: '25px Arial',fill: ' #cc0000'});
+    scoreText = game2.add.text(0,0,'Score:',{font: '20px Coiny',fill: ' #cc0000'});
+    healthText = game2.add.text(0,570,'Lives',{font: '15px Coiny',fill: ' #00cc00'});
+    ammoText = game2.add.text(585,570,'Ammo',{font: '15px Coiny',fill: ' #cc0000'});
 
-    
+
+    //  explosion
+    explosions = game2.add.group();
+    explosions.createMultiple(30, 'explode');
+    explosions.forEach(setupInvader, this);
+
+    ammoImage = game2.add.group();
+    for (var i = 0; i < 7; i++) {
+        var allammo = ammoImage.create(605, game2.world.height - 90 + (10 * i), 'ammo');
+        allammo.anchor.setTo(0.5, 0.5);
+        allammo.angle = 0;
+
+    }
+
+    //lives
+    liveImage = game2.add.group();
+    for (var i = 0; i < 3; i++) {
+        var lives = liveImage.create(20, game2.world.height - 50 + (10 * i), 'live_image');
+        lives.anchor.setTo(0.5, 0.5);
+        lives.angle = 0;
+    }
+
+}
+
+function setupInvader (invader) {
+
+    invader.anchor.x = 0.5;
+    invader.anchor.y = 0.5;
+    invader.animations.add('explode');
 
 }
 
@@ -150,8 +184,7 @@ function update() {	//Called repeatedly to update the game state
     bullets.forEachExists(screenWrap, this);
 
     scoreText.text = 'Stars:' + score;
-    ammoText.text = "Ammo: " + ammo;
-    healthText.text = 'Lives:' + health;
+   
 
 }
 
@@ -200,23 +233,25 @@ function render() {
 function killInvader(){
     if(shipCollideInvader){
         invader.kill();
+        var explosion = explosions.getFirstExists(false);
+        explosion.reset(invader.body.x, invader.body.y);
+        explosion.play('explode', 30, false, true);
     }
 }
  
 
 function createStars(msg){     //Stars spawn in a random location and move at a random speed between 2 points
 	//TODO: improve star movement (not just moving back and forth)
-	invader = stars.create(msg.x, msg.y, 'invader');
+	invader = invaders.create(msg.x, msg.y, 'invader');
 	invader.anchor.setTo (.5,.5);
 	score = msg.score;
     var tween = game2.add.tween(invader).to({x:(msg.vx),y: (msg.vy) },2000,Phaser.Easing.Linear.None,true,0,1000,true);
     tween.onLoop.add(descend,this);
 
-   
 }
 
 function descend(){
-    stars.y ==10;
+    invaders.y ==10;
 }
 }
 startGame2();

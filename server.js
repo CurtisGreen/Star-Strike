@@ -45,8 +45,8 @@ io.sockets.on('connection', function(conn) {
   conn.on('double', function(msg) {   //Checks for stars doubling
       io.emit('double', msg);
   });
-  conn.on('stars', function(msg) {   //Updates stars position 
-      io.emit('stars', msg);
+  conn.on('invaders', function(msg) {   //Updates stars position 
+      io.emit('invaders', msg);
   });
   conn.on('defeat', function(msg) {   //Updates stars position 
       io.emit('defeat', msg);
