@@ -28,8 +28,7 @@ var score = 0;
 var scoreText;
 var winText;
 var healthText;
-var defeat = false;
-var victory = false;
+var defeat;
 var shipCollideInvader = false;
  //var countDeaths = 0;
 
@@ -43,7 +42,7 @@ function preload() {    //all image files are in 'assets' folder
     game.load.image('invader', 'assets/invader.png');
     game.load.spritesheet('explode', 'assets/explode.png', 128, 128);
     game.load.image('ammo', 'assets/ammo.png');
-     game.load.image('live_image', 'assets/i_live.png');
+    game.load.image('live_image', 'assets/i_live.png');
 
 }
 
@@ -63,10 +62,15 @@ function create() { //creates player1, the one the client controls
 	});
 	
 	socket.on('defeat', function(msg){
-		if (msg.id != userId && !defeat){
+		if (msg.id != userId && msg.wins < 2){
+			//TODO: change it to be round over text
 			winText.visible = true;
 			scoreText.visible = false;
-			victory = true;
+			winCondition.defeats[winCondition.rounds] = true;
+			winCondition.round++;
+		}
+		else if (msg.id != userId && msg.wins >= 2){
+			//TODO: Player 2 wins
 		}
 	});
 	
@@ -145,7 +149,8 @@ function create() { //creates player1, the one the client controls
 
     //  Post-game stats
     stats = {shotsFired: 0, shotsHit: 0};
-
+	
+	winCondition = {round: 0, wins: 0, defeats: [false, false, false], victories: [false, false, false]};
 }
 
 function updateP2(){    //update the user's location on the server
@@ -210,7 +215,7 @@ function update() { //Called 60 times per second to update the state of the game
     scoreText.text = 'Invaders:' + score;
    
 
-    if(score >= 20 && !victory) {   //Show defeat text
+    if(score >= 20 && winCondition.wins < 2) {   //Show defeat text
 
         loseText.visible = true;
         scoreText.visible = false;
@@ -372,9 +377,10 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
 
    }
     score--;
-	if (!victory && player.health <= 0 ){  //Player lost all their health
+	if (winCondition.wins < 2 && player.health <= 0 ){  //Player lost all their health
         player.kill();
         defeat = true;
+		//TODO: change to round victories
         loseText.visible = true;
         scoreText.visible = false;
         healthText.visible = false;
@@ -382,6 +388,7 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
         socket.emit('defeat', { //Tell server you died
             id: userId,
             dead: true,
+			wins: winCondition.wins,
         });
 	}
 }
