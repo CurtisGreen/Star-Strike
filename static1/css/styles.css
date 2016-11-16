@@ -30,7 +30,7 @@ ul,li{
 
 .title{
    font-family: 'Coiny';
-    color:#006bb3;
+    color:#4C4CFF;
 }
 
 #screen{
@@ -60,7 +60,7 @@ ul,li{
 #game_title { 
    font-family: 'Coiny';
    font-size: 60px;
-   color: #006bb3;
+   color: #4C4CFF;
    position: absolute; 
    top: 150px; 
    left: 150px; 
@@ -97,7 +97,7 @@ ul,li{
 .opt{
   display: block;
   font-family: 'Coiny';
-  color:#006bb3;
+  color:#4C4CFF;
   background:none;
   border:none;
   text-align: center;
