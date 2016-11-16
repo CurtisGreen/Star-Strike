@@ -18,6 +18,8 @@ var ammoTime = 0;
 
 var stats;
 
+var explosion;
+
 var stars;
 var score = 0;
 var scoreText;
@@ -36,6 +38,7 @@ function preload() {    //all image files are in 'assets' folder
     game.load.image('bullet', 'assets/bullets.png');
     game.load.image('ship', 'assets/ship.png');
     game.load.image('invader', 'assets/invader.png');
+    game.load.spritesheet('explode', 'assets/explode.png', 128, 128);
 
 }
 
@@ -112,6 +115,11 @@ function create() { //creates player1, the one the client controls
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'Second Place!', {font: '32px Arial',fill: '#fff'});
     loseText.visible = false;
 
+     //  explosion
+    explosions = game.add.group();
+    explosions.createMultiple(30, 'explode');
+    explosions.forEach(setupInvader, this);
+
     //  Post-game stats
     stats = {shotsFired: 0, shotsHit: 0};
 
@@ -125,6 +133,14 @@ function updateP2(){    //update the user's location on the server
 	  rotation: player.rotation,
 	  fire: game.input.keyboard.isDown(Phaser.Keyboard.Z),
 	});
+
+}
+
+function setupInvader (invader) {
+
+    invader.anchor.x = 0.5;
+    invader.anchor.y = 0.5;
+    invader.animations.add('explode');
 
 }
 
@@ -297,6 +313,10 @@ function bulletCollisionHandler(bullet, invader){   //Destroys stars & bullets o
 
     bullet.kill();
     invader.kill();
+
+    var explosion = explosions.getFirstExists(false);
+    explosion.reset(invader.body.x, invader.body.y);
+    explosion.play('explode', 30, false, true);
 
 	var index = Array.prototype.indexOf.call(invader.parent.children, invader);
 	socket.emit('double', {    //Tell p2 that a star has been destroyed
