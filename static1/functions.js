@@ -30,8 +30,10 @@ var winText;
 var healthText;
 var defeat;
 var shipCollideInvader = false;
+var roundInnerText = 'test';
  //var countDeaths = 0;
 var shipText;
+var winCondition;
 
 var count = 0;
 
@@ -62,16 +64,21 @@ function create() { //creates player1, the one the client controls
 		}
 	});
 	
+    //  Setup bo3 recording
+    winCondition = {round: 0, wins: 0, losses: 0, defeats: [false, false, false], victories: [false, false, false]};
+
 	socket.on('defeat', function(msg){
-		if (msg.id != userId && msg.wins < 2){
-			//TODO: change it to be round over text
-			winText.visible = true;
-			scoreText.visible = false;
-			winCondition.defeats[winCondition.rounds] = true;
-			winCondition.round++;
+        console.log(msg.losses);
+        console.log(winCondition.wins);
+        console.log(winCondition.round);
+		if (msg.id != userId && winCondition.wins < 1 && winCondition.round < 5){
+			resetGame(true);
+            //TODO: Add ready screen before start
 		}
-		else if (msg.id != userId && msg.wins >= 2){
-			//TODO: Player 2 wins
+		else if (msg.id != userId && winCondition.wins >= 1){
+            winCondition.wins = 2;
+            winText.visible = true;
+            scoreText.visible = false;
 		}
 	});
 	
@@ -90,7 +97,7 @@ function create() { //creates player1, the one the client controls
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-    //  All 40 of them
+    //  All 7 of them
     bullets.createMultiple(7, 'bullet');
     bullets.setAll('anchor.x', 0.5);
     bullets.setAll('anchor.y', 0.5);
@@ -114,6 +121,7 @@ function create() { //creates player1, the one the client controls
     invaders.enableBody = true;
     invaders.physicsBodyType = Phaser.Physics.ARCADE;
 
+    // Populate map
     createInvaders();
     
     //  Victory/defeat text
@@ -123,7 +131,9 @@ function create() { //creates player1, the one the client controls
 	shipText = game.add.text(90,20,'You killed 10 invaders! You now have Unlimited ammo!',{font: '20px Coiny',fill: ' #7FBF7F'});
 	shipText.visible = false;
 	
-	
+	roundText = game.add.text(game.world.centerX-50, game.world.centerY, roundInnerText, {font: '40px Coiny',fill: '#329932'});
+    roundText.visible = false; 
+
     winText = game.add.text(game.world.centerX, game.world.centerY, 'You Win!', {font: '40px Coiny',fill: '#329932'});
     winText.visible = false; 
 	loseText = game.add.text(game.world.centerX, game.world.centerY, 'You Lose!', {font: '40px Coiny',fill: '#E50000'});
@@ -133,7 +143,6 @@ function create() { //creates player1, the one the client controls
     explosions = game.add.group();
     explosions.createMultiple(30, 'explode');
     explosions.forEach(setupInvader, this);
-
 
     // ammo
     ammoImage = game.add.group();
@@ -154,8 +163,7 @@ function create() { //creates player1, the one the client controls
 
     //  Post-game stats
     stats = {shotsFired: 0, shotsHit: 0};
-	
-	winCondition = {round: 0, wins: 0, defeats: [false, false, false], victories: [false, false, false]};
+
 }
 
 function updateP2(){    //update the user's location on the server
@@ -220,16 +228,13 @@ function update() { //Called 60 times per second to update the state of the game
     scoreText.text = 'Invaders:' + score;
    
 
-    if(score >= 20 && winCondition.wins < 2) {   //Show defeat text
-
+    if(score >= 20 && winCondition.wins < 1 && winCondition.losses <= 1) {   //Show defeat text
+		resetGame(false);
+    }
+    else if (score >= 20 && winCondition.wins >= 2 ){
         loseText.visible = true;
         scoreText.visible = false;
         healthText.visible = false;
-		
-		socket.emit('defeat', {   //Tell server you lost
-			id: userId,
-			dead: false,
-		});
     }
 
 }
@@ -301,6 +306,8 @@ function render() {
 
 function createInvaders(){     //Creates invaders that move randomly
 
+    if (score < 20 && winCondition.losses < 2 && winCondition.wins < 2){
+
     var intersect = false;
 
     while (!intersect){     //This loop verifies the invader will not spawn too close to the user
@@ -335,6 +342,8 @@ function createInvaders(){     //Creates invaders that move randomly
 	  vy: this.vy,
 	  score: score, 
 	});
+
+    }
 }
 
 function descend(){
@@ -350,30 +359,27 @@ function bulletCollisionHandler(bullet, invader){   //Destroys invader & bullets
     var explosion = explosions.getFirstExists(false);
     explosion.reset(invader.body.x, invader.body.y);
     explosion.play('explode', 30, false, true);
-
 	var index = Array.prototype.indexOf.call(invader.parent.children, invader);
+
 	socket.emit('double', {    //Tell p2 that an invader has been destroyed
 		check: true,
 		id: userId,
 		index: index,
 		score: score,
 	});
+
     score--;
     stats.shotsHit++;
+
     console.log('Invaders destroyed: ' + stats.shotsHit + ' Hit percentage: ' + stats.shotsHit/stats.shotsFired*100 + '%');
 	if(stats.shotsHit == 10)
 	{
-		
-		shipText.visible = true; 
-		
-	
-    
+		shipText.visible = true;
 	}
 	if(stats.shotsHit == 15)
 	{
 		shipText.visible = false; 
 	}
-	
 	
 }
 function playerCollisionHandler(player, invader){  //Player loses health or dies when player & invaders intersect
@@ -397,10 +403,11 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
 
    }
     score--;
-	if (winCondition.wins < 2 && player.health <= 0 ){  //Player lost all their health
+	if (winCondition.wins <= 1 && player.health <= 0){  //Player lost all their health
         player.kill();
-        defeat = true;
-		//TODO: change to round victories
+        resetGame(false);
+	}
+    else if (winCondition.losses == 2 && player.health <= 0){
         loseText.visible = true;
         scoreText.visible = false;
         healthText.visible = false;
@@ -408,10 +415,58 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
         socket.emit('defeat', { //Tell server you died
             id: userId,
             dead: true,
-			wins: winCondition.wins,
+            wins: winCondition.wins,
+            losses: winCondition.losses,
         });
-	}
+    }
 	
+}
+
+function resetGame(isWon){
+
+    if(isWon){  //This player one the round
+
+        winCondition.victories[winCondition.round] = true;
+        roundInnerText = 'You win round ' + (winCondition.round+1) + '!';
+        winCondition.round++;
+        winCondition.wins++;
+        roundText.text = roundInnerText;
+        roundText.visible = true;
+
+        setTimeout(function(){
+            console.log('finished waiting');
+            roundText.visible = false;
+            invaders.callAll('kill');
+            createInvaders();
+
+        }, 3000);
+    }
+    else{   //This player lost the round
+
+        winCondition.defeats[winCondition.round] = true;
+        roundInnerText = 'Player 2 wins round ' + (winCondition.round+1) + '!';
+        winCondition.round++;
+        winCondition.losses++;
+        roundText.text = roundInnerText;
+        roundText.visible = true;
+
+        console.log(roundInnerText);
+
+        socket.emit('defeat', { //Tell server you died
+            id: userId,
+            dead: true,
+            wins: winCondition.wins,
+            losses: winCondition.losses,
+        });
+
+        setTimeout(function(){
+            console.log('finished waiting');
+            roundText.visible = false;
+            player.revive();
+            invaders.callAll('kill');
+            createInvaders();
+        }, 3000);
+    }
 }
 }
 
