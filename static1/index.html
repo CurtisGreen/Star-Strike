@@ -37,7 +37,7 @@
             <div class="title">Star Strike</div>
       </div>
 
-      <div class = "image">
+      <div class = "menu" >
          <img src="assets/ba2.png" alt="" height="800" width="1280">
          <h1 id = "game_title">STAR STRIKE</h1>
          <ul id = "options_list">
@@ -48,6 +48,14 @@
          </ul> 
       </div>
 
+
+      <div id = "load_screen" style = "display:none" >
+           <img src="assets/universe.png" alt="" height="800" width="1280">
+           <h1 class = "title_load" > STAR STRIKE</h1>
+          <div class="loader"></div>
+      </div>
+
+
       <div id = "screens"  style = "display:none" >
           <div id = "player_1"><script src = functions.js></script></div>
           <div id = "player_2"  ><script src = functions2.js></script></div>
@@ -57,21 +65,29 @@
 
     <script>
 
+
         $("#button1").click(function(){
-        $(".image").hide();
-        $(".header").show();
-        $("#screens" ).show();
+
+          $(".menu").hide();
+          $("#load_screen").show();
+
+          setTimeout(function(){
+              var load_screen = document.getElementById("load_screen");
+              load_screen.style.display = "none";
+              $(".header").show();
+              $("#screens" ).show();
+          }, 3500);
 
         });
         
         $( "#button2" ).click(function(){
-        $( ".image").hide();
+        $( ".menu").hide();
         $( ".header").show();
         $( "#select_ship").show();
         });
         
         $( "#button2" ).click(function(){
-        $( ".image").hide();
+        $( ".menu").hide();
         $( ".header").show();
         $( "#select_ship").show();
         });

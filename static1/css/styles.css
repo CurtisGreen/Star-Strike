@@ -51,7 +51,7 @@ ul,li{
 }
 
 
-.image{
+.menu{
     position: relative;
     width: 100%;
 }
@@ -106,4 +106,52 @@ ul,li{
   cursor: pointer;
   width: 300px;
 }
+
+
+#load_screen{
+  position: relative;
+  width: 1280px;
+  height: 800px;
+}
+
+.title_load{
+
+  font-size: 50px;
+  position: absolute;
+  left: 460px;
+  top:140px;
+  font-family: 'Coiny';
+  color:#4C4CFF;
+
+
+}
+
+
+
+.loader {
+  position: absolute;
+  top:0px;
+  border: 20px solid #4C4CFF;
+  border-radius: 50%;
+  border-top: 20px solid #b30000;
+  border-right: 20px solid #4C4CFF;
+  border-bottom: 20px solid #b30000;
+  width: 150px;
+  height: 150px;
+  left: 580px;
+  top: 280px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+
 
