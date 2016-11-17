@@ -19,7 +19,7 @@ var health = 3;
 var scoreText;
 var healthText;
 var ammoText;
-var ammo = 7;
+var ammo = 10;
 var ammoImage;
 var liveImage;
 var shipCollideInvader = false;
@@ -138,7 +138,7 @@ function create() {     //Called when object is created, creates player 2, the o
 
     //  Game input
     cursors = game2.input.keyboard.createCursorKeys();
-    game2.input.keyboard.addKeyCapture([ Phaser.Keyboard.Z ]);
+    game2.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR]);
 	
     //  create invaders objects
     invaders = game2.add.group();
@@ -151,15 +151,14 @@ function create() {     //Called when object is created, creates player 2, the o
     ammoText = game2.add.text(585,570,'Ammo',{font: '15px Coiny',fill: ' #cc0000'});
 
 
-
     //  explosion
     explosions = game2.add.group();
     explosions.createMultiple(30, 'explode');
     explosions.forEach(setupInvader, this);
 
     ammoImage = game2.add.group();
-    for (var i = 0; i < 7; i++) {
-        var allammo = ammoImage.create(605, game2.world.height - 90 + (10 * i), 'ammo');
+    for (var i = 0; i < ammo; i++) {
+        var allammo = ammoImage.create(605, game2.world.height - 120+ (10 * i), 'ammo');
         allammo.anchor.setTo(0.5, 0.5);
         allammo.angle = 0;
 
@@ -187,7 +186,7 @@ function update() {	//Called repeatedly to update the game state
 	
     screenWrap(player);
 
-    bullets.forEachExists(screenWrap, this);
+   
 
     scoreText.text = 'Invaders:' + score;
 
@@ -257,6 +256,7 @@ function createStars(msg){     //Stars spawn in a random location and move at a 
 
 function descend(){
     invaders.y ==10;
+
 }
 }
 startGame2();

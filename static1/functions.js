@@ -13,7 +13,7 @@ var cursors;
 var bullet;
 var bullets;
 var bulletTime = 0;
-var ammo = 15;
+var ammo = 10;
 var ammoImage;
 var liveImage;
 var stateText;
@@ -115,7 +115,7 @@ function create() { //creates player1, the one the client controls
 
     //  Game input
     cursors = game.input.keyboard.createCursorKeys();
-    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.Z ]);
+    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR]);
 
     invaders = game.add.group();
     invaders.enableBody = true;
@@ -147,7 +147,7 @@ function create() { //creates player1, the one the client controls
     // ammo
     ammoImage = game.add.group();
     for (var i = 0; i < ammo; i++) {
-        var allammo = ammoImage.create(605, game.world.height - 150 + (10 * i), 'ammo');
+        var allammo = ammoImage.create(605, game.world.height - 120 + (10 * i), 'ammo');
         allammo.anchor.setTo(0.5, 0.5);
         allammo.angle = 0;
 
@@ -213,7 +213,7 @@ function update() { //Called 60 times per second to update the state of the game
         player.body.angularVelocity = 0;
     }
 
-    if (game.input.keyboard.isDown(Phaser.Keyboard.Z))
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
     {
         fireBullet();
         updateP2(); //TODO: update player shooting only when not reloading
@@ -223,7 +223,7 @@ function update() { //Called 60 times per second to update the state of the game
 
     screenWrap(player);	//Let the player move from one side of the screen to the next
 
-    bullets.forEachExists(screenWrap, this);
+    //bullets.forEachExists(screenWrap, this);
 
     scoreText.text = 'Invaders:' + score;
    
@@ -268,9 +268,8 @@ function fireBullet () {    //shoots lasers in targeted direction
 		else if (ammo <= 0 && game.time.now > ammoTime){  //Enough time has passed to reload
 			//console.log('ammo = ' + ammo + ' ammoTime = ' + ammoTime + 'game time = ' + game2.time.now);
 			ammoTime = game.time.now + 5000;
-			ammo = 7;
+			ammo = 10;
             ammoImage.callAll('revive');
-
 		}
     }
 
