@@ -68,9 +68,9 @@ function create() { //creates player1, the one the client controls
     winCondition = {round: 0, wins: 0, losses: 0, defeats: [false, false, false], victories: [false, false, false]};
 
 	socket.on('defeat', function(msg){
-        console.log(msg.losses);
-        console.log(winCondition.wins);
-        console.log(winCondition.round);
+        console.log('listened losses ' + msg.losses);
+        console.log('listened wins ' + winCondition.wins);
+        console.log('listened rounds ' + winCondition.round);
 		if (msg.id != userId && winCondition.wins < 1 && winCondition.round < 5){
 			resetGame(true);
             //TODO: Add ready screen before start
@@ -191,7 +191,6 @@ function update() { //Called 60 times per second to update the state of the game
     if (cursors.up.isDown)
     {
         game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
-        updateP2(); //send data to server
     }
     else
     {
@@ -201,12 +200,10 @@ function update() { //Called 60 times per second to update the state of the game
     if (cursors.left.isDown)
     {
         player.body.angularVelocity = -300;
-        updateP2();
     }
     else if (cursors.right.isDown)
     {
         player.body.angularVelocity = 300;
-        updateP2();
     }
     else
     {
@@ -216,9 +213,8 @@ function update() { //Called 60 times per second to update the state of the game
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
     {
         fireBullet();
-        updateP2(); //TODO: update player shooting only when not reloading
     }
-
+    updateP2(); //Send data of your position to the server
 
 
     screenWrap(player);	//Let the player move from one side of the screen to the next
@@ -389,6 +385,7 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
     explosion.reset(invader.body.x, invader.body.y);
     explosion.play('explode', 30, false, true);  //Player was damaged by an invader
     player.health -= 1;
+    console.log ('got hit, health = ' + player.health);
     shipCollideInvader = true;
     liveImage.getFirstAlive().kill();
 	
@@ -396,18 +393,23 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
     socket.emit('health', {
         check: true,
         id: userId,
-        health: player.health,
+        health: player.health, 
         shipCollideInvader: shipCollideInvader
 
     });
 
    }
     score--;
-	if (winCondition.wins <= 1 && player.health <= 0){  //Player lost all their health
+    if (winCondition.losses == 1 && player.health == 0){
+        winCondition.losses++;
+    }
+    console.log('score = ' + score + ' losses = ' + winCondition.losses + ' health = ' + player.health);
+	if (winCondition.losses <= 1 && player.health <= 0){  //Player lost all their health
         player.kill();
         resetGame(false);
 	}
     else if (winCondition.losses == 2 && player.health <= 0){
+        console.log('Wins = ' + winCondition.losses);
         loseText.visible = true;
         scoreText.visible = false;
         healthText.visible = false;
@@ -424,7 +426,7 @@ function playerCollisionHandler(player, invader){  //Player loses health or dies
 
 function resetGame(isWon){
 
-    if(isWon){  //This player one the round
+    if(isWon){  //This player won the round
 
         winCondition.victories[winCondition.round] = true;
         roundInnerText = 'You win round ' + (winCondition.round+1) + '!';
@@ -433,9 +435,12 @@ function resetGame(isWon){
         roundText.text = roundInnerText;
         roundText.visible = true;
 
-        setTimeout(function(){
+        setTimeout(function(){  //Wait 3 seconds before starting next round
             console.log('finished waiting');
             roundText.visible = false;
+            player.health = 3;  //Reset health, ammo, images and invaders
+            ammo = 10;
+            score = 0;
             invaders.callAll('kill');
             liveImage.callAll('revive');
             ammoImage.callAll('revive');
@@ -453,6 +458,7 @@ function resetGame(isWon){
         roundText.visible = true;
 
         console.log(roundInnerText);
+        console.log('Wins = ' + winCondition.wins);
 
         socket.emit('defeat', { //Tell server you died
             id: userId,
@@ -461,10 +467,13 @@ function resetGame(isWon){
             losses: winCondition.losses,
         });
 
-        setTimeout(function(){
+        setTimeout(function(){  //Wait 3 seconds before starting next round
             console.log('finished waiting');
             roundText.visible = false;
+            ammo = 10;
+            score = 0;
             player.revive();
+            player.health = 3;  //Reset health, ammo, images and invaders
             invaders.callAll('kill');
             liveImage.callAll('revive');
             ammoImage.callAll('revive');

@@ -74,7 +74,7 @@ function create() {     //Called when object is created, creates player 2, the o
             health = msg.health;
             shipCollideInvader = msg.shipCollideInvader;
             killInvader();
-             liveImage.getFirstAlive().kill();
+            liveImage.getFirstAlive().kill();
 
         }
     });
@@ -84,16 +84,37 @@ function create() {     //Called when object is created, creates player 2, the o
             ammo = msg.ammo;
             ammoImage.getFirstAlive().kill();
             if(ammo <= 0  ){
-                 ammoImage.callAll('revive');
+                ammoImage.callAll('revive');
             }
            
         }
     });
 	
 	socket.on('defeat', function(msg){ //Updates whether or not p2 is dead
-		if (msg.id != userId && msg.dead){
+		if (msg.id != userId){
 			player.kill();
+
+            setTimeout(function(){  //Wait 3 seconds before starting next round
+                player.health = 3;  //Reset health, ammo, images and invaders
+                ammo = 10;
+                score = 0;
+                player.revive();
+                invaders.callAll('kill');
+                liveImage.callAll('revive');
+                ammoImage.callAll('revive');
+            }, 3000);
 		}
+        else if (msg.id == userId){
+
+            setTimeout(function(){  //Wait 3 seconds before starting next round
+                player.health = 3;  //Reset health, ammo, images and invaders
+                ammo = 10;
+                score = 0;
+                invaders.callAll('kill');
+                liveImage.callAll('revive');
+                ammoImage.callAll('revive');
+            }, 3000);
+        }
 	});
 
     socket.on('invaders', function(msg){   //Copie's p2's stars to the secondary screen
