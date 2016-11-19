@@ -117,8 +117,8 @@ function create() {     //Called when object is created, creates player 2, the o
         }
 	});
 
-    socket.on('invaders', function(msg){   //Copie's p2's stars to the secondary screen
-        if (msg.id != userId && score < 20){
+    socket.on('invaders', function(msg){   //Copies p2's stars to the secondary screen
+        if (msg.id != userId && score < 20 && userId != 2){
             createStars(msg);
         }
     });
