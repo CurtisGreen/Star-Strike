@@ -35,28 +35,35 @@ io.sockets.on('connection', function(conn) {
 		conn.userId = Math.random();
 		conn.emit('onconnected', { id: conn.userId } );
 		console.log('\t socket.io:: player ' + conn.userId + ' connected');
-	}, 900);
+	}, 1800);
   
 
   conn.on('update', function(msg) {   //Sends the client data to the server then to the opposing player
       io.emit('update', msg);
   });
-  
-  conn.on('double', function(msg) {   //Checks for stars doubling
+  conn.on('double', function(msg) {   //Checks for invaders doubling
       io.emit('double', msg);
   });
-  conn.on('invaders', function(msg) {   //Updates stars position 
+  conn.on('invaders', function(msg) {   //Updates invader position 
       io.emit('invaders', msg);
   });
-  conn.on('defeat', function(msg) {   //Updates stars position 
+  conn.on('defeat', function(msg) {   //Updates win condition (0-2)
       io.emit('defeat', msg);
   });
   conn.on('health', function(msg) {   //Updates stars position 
+
       io.emit('health', msg);
   });
-
-   conn.on('ammo', function(msg) {   //Updates stars position 
+   conn.on('ammo', function(msg) {   //Updates ammo (0-10)
       io.emit('ammo', msg);
+  })
+
+   conn.on('bulletExplosion', function(msg) {  //bullete explosion 
+      io.emit('bulletExplosion', msg);
+  });
+
+   conn.on('initialize', function(msg) {  //Tells the client both are ready
+      io.emit('initialize', msg);
   })
 
    conn.on('disconnect', function () {
@@ -68,8 +75,7 @@ io.sockets.on('connection', function(conn) {
 
 // Listen on a high port.
 
-var port = 12149;
-
+var port = 12134;
 server.listen(port, function() {
   console.log("Listening on port " + port);
 });
