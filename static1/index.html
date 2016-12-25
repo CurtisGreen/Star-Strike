@@ -43,7 +43,7 @@
          <ul id = "options_list">
             <button class = "opt" id = "button1" type="button">START GAME</button>
             <button class = "opt" id = "button2" type="button">SETTINGS</button>
-            <button class = "opt" type="button">CREDITS</button>
+            <button class = "opt" id = "button3" type="button">INSTRUCTION</button>
             <button class = "opt" type="button">QUIT</button>
          </ul> 
       </div>
@@ -60,7 +60,29 @@
           <div id = "player_1"><script src = functions.js></script></div>
           <div id = "player_2"  ><script src = functions2.js></script></div>
       </div>
+	
+	  <div id = "reset" style = "display: none" >
+		<button class = "opt" id = "reset" type="button">Back to Main Menu</button>
+	  </div>
+      
+      <div id = "select_screens"  style = "display:none" >
+           <div id = "select_ship"><script src = select_ship.js></script></div>
+      </div>
+	
+       <div id = "instruction"  style = "display:none" >
+           <img src="assets/instruction.png" alt="" height="610" width="1300">
+           <ul id = "options_list">
+            <button id = "inst_butt" type="button">NEXT -></button>
+         </ul> 
+      </div>
 
+       <div id = "instruction2"  style = "display:none" >
+           <img src="assets/instruction2.png" alt="" height="700" width="1300">
+           <ul id = "options_list">
+           <button id = "back_menu" type="button"> BACK TO MENU</button>
+           </ul>
+      </div>
+      
     </div>
 
     <script>
@@ -76,20 +98,35 @@
               load_screen.style.display = "none";
               $(".header").show();
               $("#screens" ).show();
-          }, 3500);
+          }, 0);
 
         });
         
         $( "#button2" ).click(function(){
         $( ".menu").hide();
         $( ".header").show();
-        $( "#select_ship").show();
+        $( "#select_screens").show();
         });
-        
-        $( "#button2" ).click(function(){
+      	
+      	$( "#button3" ).click(function(){
         $( ".menu").hide();
         $( ".header").show();
-        $( "#select_ship").show();
+        $( "#instruction").show();
+        });
+
+        $( "#inst_butt" ).click(function(){
+        $( "#instruction").hide();
+        $( ".header").show();
+        $( "#instruction2").show();
+        });
+
+        $( "#back_menu" ).click(function(){
+        $( "#instruction2").hide();
+        $( ".menu").show();
+        });
+		
+		$( "#reset" ).click(function(){
+			location.reload();
         });
     </script>
       <script src="base.js"></script>
