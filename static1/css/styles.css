@@ -38,6 +38,21 @@ ul,li{
   
 }
 
+#reset{
+  top:0px;
+  left:170px;
+  width: 1000px;
+  text-align: center;
+  display: block;
+  color:#4C4CFF;
+  background:none;
+  border:none;
+  text-decoration: none;
+  font-size: 2.5vw;
+  
+  cursor: pointer;
+  width: 1300px;
+}
 
 
 #player_1{
@@ -81,6 +96,29 @@ ul,li{
   margin-top: 0px;
 }
 
+#back_menu:hover{
+  color:#cccccc;
+  font-size: 31px;
+  text-shadow: 5px 5px 8px #002db3;
+}
+
+#back_menu {
+  position: absolute;
+  top:275px;
+  left:170px;
+  width: 500px;
+  text-align: center;
+  display: block;
+  font-family: 'Coiny';
+  color:#4C4CFF;
+  background:none;
+  border:none;
+  text-align: center;
+  text-decoration: none;
+  font-size: 30px;
+  cursor: pointer;
+  width: 300px;
+}
 
 .button1 {
  
@@ -107,6 +145,27 @@ ul,li{
   width: 300px;
 }
 
+#inst_butt:hover{
+  color:#cccccc;
+  font-size: 31px;
+  text-shadow: 5px 5px 8px #002db3;
+}
+
+#inst_butt{
+  position: absolute;
+  display: block;
+  font-family: 'Coiny';
+  color:#4C4CFF;
+  background:none;
+  border:none;
+  text-align: right;
+  text-decoration: none;
+  font-size: 30px;
+  cursor: pointer;
+  width: 140px;
+  left:950px;
+  top:40px;
+}
 
 #load_screen{
   position: relative;
