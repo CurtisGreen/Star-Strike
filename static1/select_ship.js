@@ -1,86 +1,91 @@
-var game;
-var speedMult = 0.7;
-var friction = 0.99;
-var colors = ["0xac81bd","0xff5050","0xdab5ff","0xb5ffda","0xfffdd0","0xcc0000","0x54748b","0x4b0082","0x80ab2f","0xff784e","0xe500db","0x223c4a","0x223c4a","0xf1290e","0x648080","0xbbc1c4","0x6f98a2","0x71717e"];
+var game = new Phaser.Game(1280, 700, Phaser.AUTO, 'select_ship', { preload: preload, create: create,update : update });
 
+function preload() {
 
-window.onload = function() {	
-	game = new Phaser.Game(820, 880, Phaser.AUTO, "");
-     game.state.add("select_ship", select_ship);
-     game.state.start("select_ship");
+    game.load.spritesheet('button', 'assets/ship.png', 193, 71);
+    game.load.spritesheet('button2', 'assets/ship2.png', 193, 71);
+    game.load.spritesheet('button3', 'assets/ship3.png', 193, 71);
+    game.load.spritesheet('button4', 'assets/ship4.png', 193, 71);
+    game.load.spritesheet('menu', 'assets/BACK_TO_MENU.png', 193, 71);
+    game.load.image('background','assets/universe.png');
+    game.load.spritesheet('up', 'assets/up.png', 45, 42);
+    game.load.spritesheet('down', 'assets/down.png', 45, 46);
+    game.load.spritesheet('resume', 'assets/resume.png', 45, 46);
+    game.load.spritesheet('pause', 'assets/pause.png', 45, 46);
+
 }
 
-var select_ship = function(game){};
-select_ship.prototype = {
-     preload: function(){
-          game.load.image("ship", "assets/ship.png");
-          game.load.image("transp", "assets/transp.png");
-     },
-     create: function(){  
-          game.stage.backgroundColor = "#000044"; 
-          game.add.text(game.width / 2, 50, "Select your spaceship", {font: "18px Arial", fill: "#ffffff"}).anchor.set(0.5);
-          game.add.text(game.width / 2, 70, "(You can drag spaceship to select)", {font: "18px Arial", fill: "#ffffff"}).anchor.set(0.5);
-          this.scrollingMap = game.add.tileSprite(0, 0, game.width / 2 + colors.length * 90 + 64, game.height, "transp");
-          this.scrollingMap.inputEnabled = true;
-          this.scrollingMap.input.enableDrag(false);
-          this.scrollingMap.savedPosition = new Phaser.Point(this.scrollingMap.x, this.scrollingMap.y);
-          this.scrollingMap.isBeingDragged = false; 
-          this.scrollingMap.movingSpeed = 0; 
-          this.scrollingMap.input.allowVerticalDrag = false;
-          this.scrollingMap.input.boundsRect = new Phaser.Rectangle(game.width - this.scrollingMap.width, game.height - this.scrollingMap.height, this.scrollingMap.width * 2 - game.width, this.scrollingMap.height * 2 - game.height);
-          for(var i = 0; i < colors.length; i++){
-               var ship = game.add.image(game.width / 2 + i * 90, game.height / 2, "ship");
-               ship.anchor.set(0.5);
-               ship.tint = colors[i];
-               this.scrollingMap.addChild(ship)
-          }
-          this.scrollingMap.events.onDragStart.add(function(){
-               this.scrollingMap.isBeingDragged = true;
-               this.scrollingMap.movingSpeed = 0;
-          }, this);
-          this.scrollingMap.events.onDragStop.add(function(){
-               this.scrollingMap.isBeingDragged = false;
-          }, this);
-     },
-     update:function(){
-          var zoomed = false;
-          for(var i = 0; i < this.scrollingMap.children.length; i++){
-               if(Math.abs(this.scrollingMap.children[i].world.x - game.width / 2) < 46 && !zoomed){
-                    this.scrollingMap.getChildAt(i).scale.setTo(1.5);
-                    zoomed = true;
-               }
-               else{
-                    this.scrollingMap.getChildAt(i).scale.setTo(1);   
-               }
-          }
-          if(this.scrollingMap.isBeingDragged){
-               this.scrollingMap.savedPosition = new Phaser.Point(this.scrollingMap.x, this.scrollingMap.y);
-          }
-          else{
-               if(this.scrollingMap.movingSpeed > 1){
-                    this.scrollingMap.x += this.scrollingMap.movingSpeed * Math.cos(this.scrollingMap.movingangle);
-                    if(this.scrollingMap.x < game.width - this.scrollingMap.width){
-                         this.scrollingMap.x = game.width - this.scrollingMap.width;
-                         this.scrollingMap.movingSpeed *= 0.5;
-                         this.scrollingMap.movingangle += Math.PI;
-                         
-                    }
-                    if(this.scrollingMap.x > 0){
-                         this.scrollingMap.x = 0;
-                         this.scrollingMap.movingSpeed *= 0.5;
-                         this.scrollingMap.movingangle += Math.PI;
-                    }
-                    this.scrollingMap.movingSpeed *= friction;
-                    this.scrollingMap.savedPosition = new Phaser.Point(this.scrollingMap.x, this.scrollingMap.y);
-               }
-               else{
-                    var distance = this.scrollingMap.savedPosition.distance(this.scrollingMap.position);
-                    var angle = this.scrollingMap.savedPosition.angle(this.scrollingMap.position);
-                    if(distance > 4){
-                         this.scrollingMap.movingSpeed = distance * speedMult;
-                         this.scrollingMap.movingangle = angle;
-                    }
-               }
-          }
-     }
+var button;
+var button2;
+var button3;
+var button4;
+var background;
+
+function create() {
+
+    game.stage.backgroundColor = '#FF3333';
+
+    background = game.add.tileSprite(0, 0, 1280, 700, 'background');
+    																				//0:out , 1:over, 2:down
+    button = game.add.button(game.world.centerX - -150, 400, 'button', actionOnClick, this, 2, 1, 0);
+    button2 = game.add.button(game.world.centerX - -50, 392, 'button2', actionOnClick, this, 2, 1, 0);
+    button3 = game.add.button(game.world.centerX - 50, 392, 'button3', actionOnClick, this, 2, 1, 0);
+    button4 = game.add.button(game.world.centerX - 150, 392, 'button4', actionOnClick, this, 2, 1, 0);
+    button5 = game.add.button(game.world.centerX - 110, 500, 'menu', OnClickToMenu, this, 2, 1, 0);
+   
+    up_button = game.add.button(game.world.centerX - 503, 100, 'up', actionOnClickUp, this, 1, 2, 0);
+    down_button = game.add.button(game.world.centerX - 503, 200, 'down', actionOnClickDown, this, 1, 2, 0);
+    resume_button = game.add.button(game.world.centerX - 530, 150, 'resume', actionOnClickResume, this, 2, 1);
+    pause_button = game.add.button(game.world.centerX - 470, 150, 'pause', actionOnClickPause, this, 2, 1);
+   
+    button.anchor.setTo(0.5, 0.5);    
+    button2.anchor.setTo(0.5, 0.5);    
+    button3.anchor.setTo(0.5, 0.5);    
+    button4.anchor.setTo(0.5, 0.5); 
+
 }
+
+function update() {
+     button.angle += 1;
+     button2.angle += 1;
+     button3.angle += 1;
+     button4.angle += 1;
+}
+
+
+function actionOnClick () {
+	
+	$("#screens" ).show();			
+	$( "#select_screens").hide();	
+   // background.visible =! background.visible;
+
+}
+
+function OnClickToMenu (){
+    $(".menu" ).show();
+    $( "#select_screens").hide();
+}
+
+//to change volume
+function actionOnClickUp () {
+
+    music.volume += 0.1;
+
+}
+
+function actionOnClickDown () {
+
+    music.volume -= 0.1;
+
+}
+
+function actionOnClickResume () {
+    
+    music.resume();
+}
+
+function actionOnClickPause () {
+    
+    music.pause();
+}
+
