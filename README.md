@@ -1,4 +1,4 @@
-# multiplayer_game
+# Star Strike: multiplayer browser game
 run on : compute.cse.tamu.edu
 
 First install : npm install 
