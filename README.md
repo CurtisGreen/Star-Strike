@@ -1,10 +1,20 @@
-# Star Strike: multiplayer browser game
-run on : compute.cse.tamu.edu
+# Star Strike
+Multiplayer Browser Game
 
-First install : npm install 
+### Setup and Run
+```
+npm install 
+node server 
+```
 
-Next run : node server.js 
-
-Then go to : compute.cs.tamu.edu:12134 (if the port is in use, change the port variable at the bottom of server.js)
+Then go to : HostName:12134
 
 ![Main menu](https://i.imgur.com/tLFJxff.png)
+
+### TODO
+* Give port as command line argument
+* Have a screen showing "waiting for player 2" or at least a message
+* Running out of ammo the first time doesn't stop you from shooting
+  * It stops you for all following reloads
+* Lower default volume
+* Have a button to go back to the main menu or quit from the game
