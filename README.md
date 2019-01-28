@@ -18,3 +18,6 @@ Then go to : HostName:12134
   * It stops you for all following reloads
 * Lower default volume
 * Have a button to go back to the main menu or quit from the game
+* Sometimes invaders = -1 for unkown reasons
+* Lot of code is duplicated to create screens 1 & 2, try to merge
+	* Also setup of variables can be improved
