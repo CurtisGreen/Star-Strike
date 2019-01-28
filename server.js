@@ -8,7 +8,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 // Serve static files on the root path.
-app.use('/', express.static('static1'));
+app.use('/', express.static('source'));
 
 // Utility function for computing a digest.
 var crypto = require('crypto');
