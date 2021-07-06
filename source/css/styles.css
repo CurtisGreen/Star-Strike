@@ -1,216 +1,205 @@
 * {
-   -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-size: 14pt;
-  background-color:"black";
+    margin: 0;
+    padding: 0;
+    font-size: 14pt;
+    background-color: 'black';
 }
 
-ul,li{
-  
-  margin: 0px;
-  padding: 0px;
-  list-style:none;
+ul,
+li {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
 }
 
 .header {
-  top: 0;
-  width: 100%;
-  height: 3.7rem;
-  background:black;
-  font-size: 2.3rem;
-  overflow: clear;
-  margin-bottom: 0px;
-   border-bottom: .1px solid #006bb3;
+    top: 0;
+    width: 100%;
+    height: 3.7rem;
+    background: black;
+    font-size: 2.3rem;
+    overflow: clear;
+    margin-bottom: 0px;
+    border-bottom: 0.1px solid #006bb3;
 }
 
-.title{
-   font-family: 'Coiny';
-    color:#4C4CFF;
+.title {
+    font-family: 'Coiny';
+    color: #4c4cff;
 }
 
-#screen{
+#reset {
+    top: 0px;
+    left: 170px;
+    width: 1000px;
+    text-align: center;
+    display: block;
+    color: #4c4cff;
+    background: none;
+    border: none;
+    text-decoration: none;
+    font-size: 2.5vw;
 
-  
+    cursor: pointer;
+    width: 1300px;
 }
 
-#reset{
-  top:0px;
-  left:170px;
-  width: 1000px;
-  text-align: center;
-  display: block;
-  color:#4C4CFF;
-  background:none;
-  border:none;
-  text-decoration: none;
-  font-size: 2.5vw;
-  
-  cursor: pointer;
-  width: 1300px;
+#player_1 {
 }
 
-
-#player_1{
-
+#player_2 {
+    margin-top: -600px;
+    margin-left: 648px;
 }
 
-#player_2
-{
-	margin-top: -600px;
-	margin-left: 648px;
-}
-
-
-.menu{
+.menu {
     position: relative;
     width: 100%;
 }
 
-
-#game_title { 
-   font-family: 'Coiny';
-   font-size: 60px;
-   color: #4C4CFF;
-   position: absolute; 
-   top: 150px; 
-   left: 150px; 
-   width: 100%; 
+#game_title {
+    font-family: 'Coiny';
+    font-size: 60px;
+    color: #4c4cff;
+    position: absolute;
+    top: 150px;
+    left: 150px;
+    width: 100%;
 }
 
-#options_list{
-  position: absolute;
-  top:275px;
-  left:200px;
-  width: 500px;
-  text-align: center;
+#options_list {
+    position: absolute;
+    top: 275px;
+    left: 200px;
+    width: 500px;
+    text-align: center;
 }
 
-.options{
-  font-size: 30px;
-  font-family: 'Coiny';
-  margin-top: 0px;
+.options {
+    font-size: 30px;
+    font-family: 'Coiny';
+    margin-top: 0px;
 }
 
-#back_menu:hover{
-  color:#cccccc;
-  font-size: 31px;
-  text-shadow: 5px 5px 8px #002db3;
-}
-
-#back_menu {
-  position: absolute;
-  top:275px;
-  left:170px;
-  width: 500px;
-  text-align: center;
-  display: block;
-  font-family: 'Coiny';
-  color:#4C4CFF;
-  background:none;
-  border:none;
-  text-align: center;
-  text-decoration: none;
-  font-size: 30px;
-  cursor: pointer;
-  width: 300px;
-}
-
-.button1 {
- 
-    color: black;
-    border: 2px solid #4CAF50;
-}
-
-.opt:hover{
-  color:#cccccc;
-  font-size: 31px;
+#back_menu:hover {
+    color: #cccccc;
+    font-size: 31px;
     text-shadow: 5px 5px 8px #002db3;
 }
 
-.opt{
-  display: block;
-  font-family: 'Coiny';
-  color:#4C4CFF;
-  background:none;
-  border:none;
-  text-align: center;
-  text-decoration: none;
-  font-size: 30px;
-  cursor: pointer;
-  width: 300px;
+#back_menu {
+    position: absolute;
+    top: 275px;
+    left: 170px;
+    width: 500px;
+    text-align: center;
+    display: block;
+    font-family: 'Coiny';
+    color: #4c4cff;
+    background: none;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 30px;
+    cursor: pointer;
+    width: 300px;
 }
 
-#inst_butt:hover{
-  color:#cccccc;
-  font-size: 31px;
-  text-shadow: 5px 5px 8px #002db3;
+.button1 {
+    color: black;
+    border: 2px solid #4caf50;
 }
 
-#inst_butt{
-  position: absolute;
-  display: block;
-  font-family: 'Coiny';
-  color:#4C4CFF;
-  background:none;
-  border:none;
-  text-align: right;
-  text-decoration: none;
-  font-size: 30px;
-  cursor: pointer;
-  width: 140px;
-  left:950px;
-  top:40px;
+.opt:hover {
+    color: #cccccc;
+    font-size: 31px;
+    text-shadow: 5px 5px 8px #002db3;
 }
 
-#load_screen{
-  position: relative;
-  width: 1280px;
-  height: 800px;
+.opt {
+    display: block;
+    font-family: 'Coiny';
+    color: #4c4cff;
+    background: none;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 30px;
+    cursor: pointer;
+    width: 300px;
 }
 
-.title_load{
-
-  font-size: 50px;
-  position: absolute;
-  left: 460px;
-  top:140px;
-  font-family: 'Coiny';
-  color:#4C4CFF;
-
-
+#inst_butt:hover {
+    color: #cccccc;
+    font-size: 31px;
+    text-shadow: 5px 5px 8px #002db3;
 }
 
+#inst_butt {
+    position: absolute;
+    display: block;
+    font-family: 'Coiny';
+    color: #4c4cff;
+    background: none;
+    border: none;
+    text-align: right;
+    text-decoration: none;
+    font-size: 30px;
+    cursor: pointer;
+    width: 140px;
+    left: 950px;
+    top: 40px;
+}
 
+#load_screen {
+    position: relative;
+    width: 1280px;
+    height: 800px;
+}
+
+.title_load {
+    font-size: 50px;
+    position: absolute;
+    left: 460px;
+    top: 140px;
+    font-family: 'Coiny';
+    color: #4c4cff;
+}
 
 .loader {
-  position: absolute;
-  top:0px;
-  border: 20px solid #4C4CFF;
-  border-radius: 50%;
-  border-top: 20px solid #b30000;
-  border-right: 20px solid #4C4CFF;
-  border-bottom: 20px solid #b30000;
-  width: 150px;
-  height: 150px;
-  left: 580px;
-  top: 280px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-
+    position: absolute;
+    top: 0px;
+    border: 20px solid #4c4cff;
+    border-radius: 50%;
+    border-top: 20px solid #b30000;
+    border-right: 20px solid #4c4cff;
+    border-bottom: 20px solid #b30000;
+    width: 150px;
+    height: 150px;
+    left: 580px;
+    top: 280px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-
-
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
