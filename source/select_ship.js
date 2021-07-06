@@ -27,7 +27,7 @@ function create() {
     game.stage.backgroundColor = '#FF3333';
 
     background = game.add.tileSprite(0, 0, 1280, 700, 'background');
-    //0:out , 1:over, 2:down
+    // 0:out , 1:over, 2:down
     button = game.add.button(
         game.world.centerX - -150,
         400,
@@ -142,7 +142,7 @@ function OnClickToMenu() {
     $('#select_screens').hide();
 }
 
-//to change volume
+// To change volume
 function actionOnClickUp() {
     music.volume += 0.1;
 }

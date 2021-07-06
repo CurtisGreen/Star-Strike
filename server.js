@@ -33,58 +33,56 @@ io.sockets.on('connection', function (conn) {
     // reference to that connection (represented by 'conn'). That's why we can
     // refer to 'conn' in these callback functions to get the correct connection.
 
+    // Timeout to make sure the game has been created so it can receive its ID
     setTimeout(function () {
-        //Timeout to make sure the game has been created so it can receive its ID
         conn.userId = Math.random();
         conn.emit('onconnected', { id: conn.userId });
         console.log('\t socket.io:: player ' + conn.userId + ' connected');
     }, 1800);
 
+    // Sends the client data to the server then to the opposing player
     conn.on('update', function (msg) {
-        //Sends the client data to the server then to the opposing player
         io.emit('update', msg);
     });
+    // Checks for invaders doubling
     conn.on('double', function (msg) {
-        //Checks for invaders doubling
         io.emit('double', msg);
     });
+    // Updates invader position
     conn.on('invaders', function (msg) {
-        //Updates invader position
         io.emit('invaders', msg);
     });
+    // Updates win condition (0-2)
     conn.on('defeat', function (msg) {
-        //Updates win condition (0-2)
         io.emit('defeat', msg);
     });
+    // Updates stars position
     conn.on('health', function (msg) {
-        //Updates stars position
-
         io.emit('health', msg);
     });
+    // Updates ammo (0-10)
     conn.on('ammo', function (msg) {
-        //Updates ammo (0-10)
         io.emit('ammo', msg);
     });
 
+    // Bullet explosion
     conn.on('bulletExplosion', function (msg) {
-        //bullete explosion
         io.emit('bulletExplosion', msg);
     });
 
+    // Tells the client both are ready
     conn.on('initialize', function (msg) {
-        //Tells the client both are ready
         io.emit('initialize', msg);
     });
 
+    // Useful to know when someone disconnects
     conn.on('disconnect', function () {
-        //Useful to know when someone disconnects
         console.log('\t socket.io:: client disconnected ' + conn.userId);
     });
 });
 
 // Listen on a high port.
-
-var port = 12134;
+const port = 12134;
 server.listen(port, function () {
     console.log('Listening on port ' + port);
 });
