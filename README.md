@@ -10,6 +10,7 @@ node server
 Then go to : HostName:12134
 
 ![Main menu](https://i.imgur.com/tLFJxff.png)
+![Game](https://user-images.githubusercontent.com/9402065/124525904-9d76be00-ddc6-11eb-8aca-48ebf81565ca.png)
 
 ### TODO
 * Give port as command line argument
