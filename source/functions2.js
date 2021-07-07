@@ -43,7 +43,7 @@ function startGame2() {
 
     // Called when object is created, creates player 2, the one the server controls
     function create() {
-        //Set up socket functions
+        // Set up socket functions
         socket.on('onconnected', function (msg) {
             // Get user's unique id
             console.log('onconnected: user id = ' + msg.id);
@@ -205,11 +205,7 @@ function startGame2() {
         bullets.setAll('anchor.y', 0.5);
 
         // Our player ship
-        player = game2.add.sprite(
-            game2.world.centerX,
-            game2.world.centerY + 200,
-            'ship'
-        );
+        player = game2.add.sprite(game2.world.centerX, game2.world.centerY + 200, 'ship');
         player.anchor.set(0.5);
 
         // and its physics settings
@@ -363,7 +359,7 @@ function startGame2() {
         health = 3;
         ammo = 10;
         shipCollideInvader = false;
-        offset = 0; //The index can be offset depending on which client connects first
+        offset = 0; // The index can be offset depending on which client connects first
         count = 0;
     }
 }

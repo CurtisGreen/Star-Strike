@@ -65,7 +65,7 @@ function startGame() {
         ship_damage = game.add.audio('ship_damage');
         music = game.add.audio('boden');
 
-        music.play('', 0, 1, true); //background music
+        music.play('', 0, 1, true); // Background music
 
         // Get user's unique id
         socket.on('onconnected', function (msg) {
@@ -92,11 +92,7 @@ function startGame() {
 
         // P2 lost the round
         socket.on('defeat', function (msg) {
-            if (
-                msg.id != userId &&
-                winCondition.wins < 1 &&
-                winCondition.round < 5
-            ) {
+            if (msg.id != userId && winCondition.wins < 1 && winCondition.round < 5) {
                 resetGame(true);
                 // TODO: Add ready screen before start
             } else if (msg.id != userId && winCondition.wins >= 1) {
@@ -148,11 +144,7 @@ function startGame() {
         bullets.setAll('anchor.y', 0.5);
 
         // Our player ship
-        player = game.add.sprite(
-            game.world.centerX,
-            game.world.centerY + 200,
-            'ship'
-        );
+        player = game.add.sprite(game.world.centerX, game.world.centerY + 200, 'ship');
         player.anchor.set(0.5);
         player.health = 3;
 
@@ -225,14 +217,11 @@ function startGame() {
         explosions = game.add.group();
         explosions.createMultiple(30, 'explode');
         explosions.forEach(setupInvader, this);
+
         // Ammo
         ammoImage = game.add.group();
         for (var i = 0; i < 10; i++) {
-            var allammo = ammoImage.create(
-                605,
-                game.world.height - 120 + 10 * i,
-                'ammo'
-            );
+            var allammo = ammoImage.create(605, game.world.height - 120 + 10 * i, 'ammo');
             allammo.anchor.setTo(0.5, 0.5);
             allammo.angle = 0;
         }
@@ -326,12 +315,7 @@ function startGame() {
         scoreText.text = 'Invaders:' + score;
 
         // Show defeat text
-        if (
-            score >= 20 &&
-            winCondition.wins < 2 &&
-            winCondition.losses < 1 &&
-            !pause
-        ) {
+        if (score >= 20 && winCondition.wins < 2 && winCondition.losses < 1 && !pause) {
             console.log(
                 'Lost the round, losses = ' +
                     winCondition.losses +
@@ -379,8 +363,8 @@ function startGame() {
         $('#reset').show();
     }
 
+    //Create explosion animation
     function setupInvader(invader) {
-        //Create explosion animation
         invader.anchor.x = 0.5;
         invader.anchor.y = 0.5;
         invader.animations.add('explode');
@@ -486,17 +470,16 @@ function startGame() {
                     if (Math.random() < 0.5) {
                         this.signy = -1;
                     }
+
                     // Create new position to move to
                     this.vx =
                         this.signx *
-                            (Math.random() *
-                                (this.maxSpeed - this.minSpeed + 1) -
+                            (Math.random() * (this.maxSpeed - this.minSpeed + 1) -
                                 this.minSpeed) +
                         this.x;
                     this.vy =
                         this.signy *
-                            (Math.random() *
-                                (this.maxSpeed - this.minSpeed + 1) -
+                            (Math.random() * (this.maxSpeed - this.minSpeed + 1) -
                                 this.minSpeed) +
                         this.y;
 
@@ -525,8 +508,8 @@ function startGame() {
                 this
             );
 
+            // Send new invader info to server
             socket.emit('invaders', {
-                // Send new invader info to server
                 id: userId,
                 x: this.x,
                 y: this.y,
@@ -541,16 +524,12 @@ function startGame() {
         invaders.y == 10;
     }
 
+    // Destroys invader & bullets on intersection
     function bulletCollisionHandler(bullet, invader) {
-        // Destroys invader & bullets on intersection
-
         var explosion = explosions.getFirstExists(false);
         explosion.reset(invader.body.x, invader.body.y);
         explosion.play('explode', 30, false, true);
-        var index = Array.prototype.indexOf.call(
-            invader.parent.children,
-            invader
-        );
+        var index = Array.prototype.indexOf.call(invader.parent.children, invader);
         score--;
         unlimitedAmmo++;
         bullet.kill();
@@ -602,10 +581,7 @@ function startGame() {
             var explosion = explosions.getFirstExists(false);
             explosion.reset(invader.body.x, invader.body.y);
             explosion.play('explode', 30, false, true); // Player was damaged by an invader
-            var index = Array.prototype.indexOf.call(
-                invader.parent.children,
-                invader
-            );
+            var index = Array.prototype.indexOf.call(invader.parent.children, invader);
             invader.kill();
             player.health -= 1; // Decrease health & delete health image
             liveImage.getFirstAlive().kill();
@@ -657,9 +633,7 @@ function startGame() {
     }
 
     function resetGame(isWon) {
-        console.log(
-            'resetting game ' + winCondition.wins + ' ' + winCondition.losses
-        );
+        console.log('resetting game ' + winCondition.wins + ' ' + winCondition.losses);
         pause = true;
 
         // This player won the round
