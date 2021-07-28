@@ -1,3 +1,4 @@
+import { Invaders } from './invaders';
 import { Ship } from './ship';
 
 export class Game {
@@ -12,6 +13,12 @@ export class Game {
     ammoImage;
     cursors;
 
+    // Audio
+    blaster;
+    destroyed;
+    ship_damage;
+    music;
+
     // HUD
     scoreText;
     healthText;
@@ -23,6 +30,18 @@ export class Game {
     health = 3;
     offset = 0;
     ammo = 10;
+    pause = false;
+
+    // Best of 3 wins
+    winCondition = {
+        round: 0,
+        wins: 0,
+        losses: 0,
+        defeats: [false, false, false],
+        victories: [false, false, false],
+    };
+
+    stats = { shotsFired: 0, shotsHit: 0 };
 
     constructor(p1, userId) {
         this.game = new Phaser.Game(648, 600, Phaser.CANVAS, 'player ' + userId, {
@@ -51,6 +70,8 @@ export class Game {
     }
 
     create() {
+        this.startAudio();
+
         // Connect to client
         socket.on('onconnected', (msg) => {
             console.log('onconnected: user id = ' + msg.id);
@@ -69,6 +90,11 @@ export class Game {
                     this.invaders.children[0].kill();
                 }
                 this.score--;
+            }
+
+            if (this.p1) {
+                const { x, y } = ship.getPosition();
+                this.invaders.createInvader(x, y);
             }
         });
 
@@ -92,13 +118,22 @@ export class Game {
 
         // Delete invaders that have been destroyed
         socket.on('double', (msg) => {
-            if (msg.check && msg.id != this.userId && this.score < 20) {
-                if (!this.invaders.children[msg.index]) {
-                    console.log('implemented offset');
-                    this.offset = 1;
+            if (msg.check && msg.id != this.userId && this.score < 20 && !this.pause) {
+                // Create 2 more for P1
+                if (this.p1) {
+                    const { x, y } = ship.getPosition();
+                    this.invaders.createInvader(x, y);
+                    this.invaders.createInvader(x, y);
                 }
-                this.invaders.children[msg.index - offset].kill();
-                this.score = msg.score;
+                // Remove destroyed from P2 screen
+                else {
+                    if (!this.invaders.children[msg.index]) {
+                        console.log('implemented offset');
+                        this.offset = 1;
+                    }
+                    this.invaders.children[msg.index - offset].kill();
+                    this.score = msg.score;
+                }
             }
         });
 
@@ -138,10 +173,34 @@ export class Game {
 
         // Update dead/alive
         socket.on('defeat', (msg) => {
-            if (msg.id != this.userId) {
-                this.ship.kill();
-                this.startRound(true);
+            if (this.p1) {
+                if (
+                    msg.id != this.userId &&
+                    this.winCondition.wins < 1 &&
+                    this.winCondition.round < 5
+                ) {
+                    this.resetGame(true);
+                }
+                // TODO: Add ready screen before start
+                else if (msg.id != userId && winCondition.wins >= 1) {
+                    console.log('Won listening defeat');
+                    this.statText.text =
+                        'Invaders destroyed: ' +
+                        stats.shotsHit +
+                        '\nHit percentage: ' +
+                        Math.round((this.stats.shotsHit / this.stats.shotsFired) * 100) +
+                        '%';
+                    this.statText.visible = true;
+                    this.winCondition.wins = 2;
+                    this.winText.visible = true;
+                    this.scoreText.visible = false;
+                    $('#reset').show();
+                }
             } else {
+                if (msg.id != this.userId) {
+                    this.ship.kill();
+                }
+
                 this.startRound(false);
             }
         });
@@ -159,7 +218,7 @@ export class Game {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Reduce P2's FPS so the game doesn't seize up
-        if (this.userId != 1) {
+        if (!this.p1) {
             this.game.desiredFPS = 1;
         }
 
@@ -174,9 +233,7 @@ export class Game {
         this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
         // Invaders
-        this.invaders = this.game.add.group();
-        this.invaders.enableBody = true;
-        this.invaders.physicsBodyType = Phaser.Physics.ARCADE;
+        this.invaders = new Invaders(this.game, this.userId);
 
         // HUD
         this.scoreText = this.game.add.text(0, 0, 'Score:', {
@@ -192,14 +249,64 @@ export class Game {
             fill: ' #cc0000',
         });
 
+        // Victory/defeat
+        this.statText = this.game.add.text(
+            this.game.world.centerX - 100,
+            this.game.world.centerY + 100,
+            'stats:',
+            { font: '20px Coiny', fill: ' #7FBF7F' }
+        );
+        this.statText.visible = false;
+        this.scoreText = this.game.add.text(0, 0, 'Score:', {
+            font: '20px Coiny',
+            fill: ' #7FBF7F',
+        });
+        this.healthText = this.game.add.text(0, 570, 'Lives', {
+            font: '15px Coiny',
+            fill: ' #00cc00',
+        });
+        this.ammoText = this.game.add.text(585, 570, 'Ammo', {
+            font: '15px Coiny',
+            fill: ' #cc0000',
+        });
+        this.shipText = this.game.add.text(
+            90,
+            20,
+            'You killed 10 invaders! You now have Unlimited ammo!',
+            { font: '20px Coiny', fill: ' #7FBF7F' }
+        );
+        this.shipText.visible = false;
+        this.roundText = this.game.add.text(
+            this.game.world.centerX - 200,
+            this.game.world.centerY,
+            'test',
+            { font: '40px Coiny', fill: '#329932' }
+        );
+        this.roundText.visible = false;
+        this.winText = this.game.add.text(
+            this.game.world.centerX - 100,
+            this.game.world.centerY,
+            'You Win!',
+            { font: '40px Coiny', fill: '#329932' }
+        );
+        this.winText.visible = false;
+        this.loseText = this.game.add.text(
+            this.game.world.centerX - 100,
+            this.game.world.centerY,
+            'You Lose!',
+            { font: '40px Coiny', fill: '#E50000' }
+        );
+
+        loseText.visible = false;
+
         // Explosion
         this.explosions = this.game.add.group();
         this.explosions.createMultiple(30, 'explode');
-        this.explosions.forEach((invader) => {
-            invader.anchor.x = 0.5;
-            invader.anchor.y = 0.5;
-            invader.animations.add('explode');
-        });
+        this.explosions.forEach((explosion) => {
+            explosion.anchor.x = 0.5;
+            explosion.anchor.y = 0.5;
+            explosion.animations.add('explode');
+        }, this);
 
         // Ammo display
         this.ammoImage = this.game.add.group();
@@ -281,5 +388,16 @@ export class Game {
                 this.ship.revive();
             }
         }, 3000);
+    }
+
+    startAudio() {
+        // Sounds
+        this.blaster = game.add.audio('blaster');
+        this.destroyed = game.add.audio('destroyed');
+        this.ship_damage = game.add.audio('ship_damage');
+        this.music = game.add.audio('boden');
+
+        // Background music
+        this.music.play('', 0, 1, true);
     }
 }

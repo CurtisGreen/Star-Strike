@@ -17,11 +17,7 @@ export class Ship {
         this.bullets.setAll('anchor.y', 0.5);
 
         // Ship
-        this.ship = game2.add.sprite(
-            game2.world.centerX,
-            game2.world.centerY + 200,
-            'ship'
-        );
+        this.ship = game.add.sprite(game.world.centerX, game.world.centerY + 200, 'ship');
         this.ship.anchor.set(0.5);
         this.game.physics.enable(this.ship, Phaser.Physics.ARCADE);
         this.ship.body.drag.set(500);
@@ -52,6 +48,10 @@ export class Ship {
         this.ship.rotation = rotation;
     }
 
+    getPosition() {
+        return { x: this.ship.x, y: this.ship.y };
+    }
+
     // Player can move from one side to the other
     screenWrap(width, height) {
         if (this.ship.x < 0) {
@@ -65,5 +65,9 @@ export class Ship {
         } else if (this.ship.y > height) {
             this.ship.y = 0;
         }
+    }
+
+    kill() {
+        this.ship.kill();
     }
 }
