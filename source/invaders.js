@@ -50,6 +50,10 @@ export class Invaders {
         return this.invaders.children[i];
     }
 
+    getPosArr() {
+        return this.invaders.children.map((invader) => ({ x: invader.x, y: invader.y }));
+    }
+
     killAll() {
         this.invaders.callAll('kill');
     }

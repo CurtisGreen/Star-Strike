@@ -30,6 +30,7 @@ export class Game {
     health = 3;
     offset = 0;
     ammo = 10;
+    ammoTime;
     pause = false;
 
     // Best of 3 wins
@@ -337,11 +338,56 @@ export class Game {
         // Screen wrap
         this.ship.screenWrap(this.game.width, this.game.height);
 
+        // Reload
+        if (this.ammo <= 0 && this.game.time.now > this.ammoTime) {
+            this.ammoTime = this.game.time.now + 5000;
+            this.ammo = 10;
+            this.ammoImage.callAll('revive');
+        }
+
         // Update score text
         this.scoreText.text = 'Invaders:' + this.score;
+
+        if (this.p1) {
+            this.updateP2();
+            this.updatePhysics();
+        }
     }
 
     render() {}
+
+    updatePhysics() {
+        this.game.physics.arcade.overlap(
+            this.ship.bullets,
+            this.invaders.invaders,
+            this.bulletCollisionHandler,
+            null,
+            this
+        );
+
+        if (!this.loseText.visible) {
+            this.game.physics.arcade.overlap(
+                this.ship.ship,
+                this.invaders.invaders,
+                this.playerCollisionHandler,
+                null,
+                this
+            );
+        }
+    }
+
+    updateP2() {
+        const { x, y, rotation } = this.ship.getPosition();
+
+        socket.emit('update', {
+            id: this.userId,
+            x,
+            y,
+            rotation,
+            fire: this.game.input.keyboard.isDown(Phaser.keyboard.Z),
+            invArray: this.invaders.getPosArr(),
+        });
+    }
 
     createStars(msg) {
         const invader = this.invaders.create(msg.x, msg.y, 'invader');
@@ -399,5 +445,115 @@ export class Game {
 
         // Background music
         this.music.play('', 0, 1, true);
+    }
+
+    // Destroys invader & bullets on intersection
+    bulletCollisionHandler(bullet, invader) {
+        const explosion = explosions.getFirstExists(false);
+        explosion.reset(invader.body.x, invader.body.y);
+        explosion.play('explode', 30, false, true);
+        const index = Array.prototype.indexOf.call(invader.parent.children, invader);
+        this.score--;
+        this.unlimitedAmmo++;
+        bullet.kill();
+        invader.kill();
+        this.destroyed.play(); // Sound for explosion.
+
+        // Tell p2 that an invader has been destroyed
+        if (!pause) {
+            socket.emit('double', {
+                check: true,
+                id: this.userId,
+                index: index,
+                score: score,
+                shipCollideInvader: true,
+            });
+        }
+
+        // Animate explosion when bullet hits invador
+        socket.emit('bulletExplosion', {
+            check: true,
+            id: userId,
+            index: index,
+            shipCollideInvader: true,
+        });
+
+        if (!this.pause) {
+            this.stats.shotsHit++;
+        }
+
+        console.log(
+            'Invaders destroyed: ' +
+                stats.shotsHit +
+                ' Hit percentage: ' +
+                (stats.shotsHit / stats.shotsFired) * 100 +
+                '%'
+        );
+        if (stats.shotsHit == 10) {
+            shipText.visible = true;
+        }
+        if (stats.shotsHit == 15) {
+            shipText.visible = false;
+        }
+    }
+
+    // Player loses health or dies when player & invaders intersect
+    playerCollisionHandler(ship, invader) {
+        // Make sure player can't die in between rounds
+        if (pause) {
+            return;
+        }
+
+        const explosion = this.explosions.getFirstExists(false);
+        explosion.reset(invader.body.x, invader.body.y);
+        explosion.play('explode', 30, false, true); // Player was damaged by an invader
+        const index = Array.prototype.indexOf.call(invader.parent.children, invader);
+        invader.kill();
+        ship.health -= 1; // Decrease health & delete health image
+        liveImage.getFirstAlive().kill();
+        ship_damage.play();
+
+        // Update p2 health for enemy player
+        socket.emit('health', {
+            id: this.userId,
+            health: ship.health,
+            index,
+            shipCollideInvader: true,
+        });
+
+        this.score--;
+        if (this.winCondition.losses == 1 && this.player.health == 0) {
+            this.winCondition.losses++;
+        }
+
+        // Player lost all their health
+        if (this.winCondition.losses <= 1 && ship.health <= 0) {
+            ship.ship.kill();
+            this.resetGame(false);
+        } else if (this.winCondition.losses == 2 && ship.health <= 0) {
+            if (this.stats.shotsFired == 0) {
+                this.stats.shotsFire = 1;
+            }
+            this.statText.text =
+                'Invaders destroyed: ' +
+                this.stats.shotsHit +
+                '\nHit percentage: ' +
+                Math.round((this.stats.shotsHit / this.stats.shotsFired) * 100) +
+                '%';
+            this.statText.visible = true;
+            this.loseText.visible = true;
+            this.scoreText.visible = false;
+            this.healthText.visible = false;
+
+            // Tell server you died
+            socket.emit('defeat', {
+                id: this.userId,
+                dead: true,
+                wins: this.winCondition.wins,
+                losses: this.winCondition.losses,
+            });
+
+            $('#reset').show();
+        }
     }
 }

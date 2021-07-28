@@ -4,9 +4,12 @@ export class Ship {
     // bullet;
     game;
     bulletTime = 0;
+    health = 3;
+    unlimitedAmmo = false;
 
     constructor(game) {
         this.game = game;
+        this.p1 = p1;
 
         // Bullets
         this.bullets = this.game.add.group();
@@ -38,6 +41,8 @@ export class Ship {
                     bullet.body.velocity
                 );
                 this.bulletTime = this.game.time.now + 200; // Limit how many lasers will be fired per second
+
+                return true;
             }
         }
     }
@@ -49,7 +54,7 @@ export class Ship {
     }
 
     getPosition() {
-        return { x: this.ship.x, y: this.ship.y };
+        return { x: this.ship.x, y: this.ship.y, rotation: this.ship.rotation };
     }
 
     // Player can move from one side to the other
