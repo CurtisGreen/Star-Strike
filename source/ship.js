@@ -7,7 +7,7 @@ export class Ship {
     health = 3;
     unlimitedAmmo = false;
 
-    constructor(game) {
+    constructor(game, p1) {
         this.game = game;
         this.p1 = p1;
 
@@ -28,8 +28,8 @@ export class Ship {
     }
 
     fireBullet() {
-        if (this.game.time.now > bulletTime) {
-            const bullet = bullets.getFirstExists(false);
+        if (this.game.time.now > this.bulletTime) {
+            const bullet = this.bullets.getFirstExists(false);
 
             if (bullet) {
                 bullet.reset(this.ship.body.x + 16, this.ship.body.y + 16);
@@ -47,6 +47,30 @@ export class Ship {
         }
     }
 
+    update(cursors) {
+        if (cursors.up.isDown) {
+            this.game.physics.arcade.accelerationFromRotation(
+                this.ship.rotation,
+                200,
+                this.ship.body.acceleration
+            );
+        } else {
+            this.ship.body.acceleration.set(0);
+        }
+
+        if (cursors.left.isDown) {
+            this.ship.body.angularVelocity = -300;
+        } else if (cursors.right.isDown) {
+            this.ship.body.angularVelocity = 300;
+        } else {
+            this.ship.body.angularVelocity = 0;
+        }
+
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.Z)) {
+            this.fireBullet();
+        }
+    }
+
     setPosition(x, y, rotation) {
         this.ship.x = x;
         this.ship.y = y;
@@ -55,6 +79,19 @@ export class Ship {
 
     getPosition() {
         return { x: this.ship.x, y: this.ship.y, rotation: this.ship.rotation };
+    }
+
+    reduceHealth() {
+        this.health -= 1;
+        return this.health;
+    }
+
+    setAmmo(ammo) {
+        this.ammo = ammo;
+    }
+
+    getAmmo() {
+        return this.ammo;
     }
 
     // Player can move from one side to the other
@@ -74,5 +111,15 @@ export class Ship {
 
     kill() {
         this.ship.kill();
+    }
+
+    reset() {
+        this.ship.health = 3;
+        this.ship.ammo = 10;
+    }
+
+    revive() {
+        this.reset();
+        this.ship.revive();
     }
 }

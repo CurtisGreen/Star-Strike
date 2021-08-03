@@ -4,18 +4,14 @@ export class Invader {
     vx = 0;
     vy = 0;
 
-    constructor(game, x, y) {
+    constructor(game, x, y, invaders) {
         this.game = game;
 
         // Create invader
         const invader = invaders.create(x, y, 'invader');
         invader.anchor.setTo(0.5, 0.5);
 
-        this.createTween(x, y, invader);
-    }
-
-    createTween(x, y, invader) {
-        // let tween = this.game.add.tween(this.invader); // TODO: maybe not necessary
+        let tween = this.game.add.tween(this.invader); // TODO: maybe not necessary
         const minSpeed = -100,
             maxSpeed = 100;
 
