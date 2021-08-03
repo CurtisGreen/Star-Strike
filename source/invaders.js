@@ -17,8 +17,13 @@ export class Invaders {
 
     createInvader(playerX, playerY) {
         const { x, y } = this.chooseSpawn(playerX, playerY);
-        console.log('creating invader at', x, y, 'vs', playerX, playerY);
+        console.log('Creating invader at', x, y, 'vs player pos:', playerX, playerY);
         const invader = new Invader(this.game, playerX, playerY, this.invaders);
+
+        console.log(
+            'Finished creating',
+            Array.prototype.indexOf.call(invader.invader.parent.children, invader.invader)
+        );
 
         // Send new invader info to server
         if (this.p1) {
@@ -50,14 +55,14 @@ export class Invaders {
         }
     }
 
-    // Update invador positions
-    update(invArray) {
-        for (const i in invArray) {
+    // Update invader positions
+    update(invaders) {
+        invaders.forEach((inv, i) => {
             if (this.invaders.children[i]) {
-                this.invaders.children[i].x = invArray[i].x;
-                this.invaders.children[i].y = invArray[i].y;
+                this.invaders.children[i].x = inv.x;
+                this.invaders.children[i].y = inv.y;
             }
-        }
+        });
     }
 
     get(i) {

@@ -8,8 +8,8 @@ export class Invader {
         this.game = game;
 
         // Create invader
-        const invader = invaders.create(x, y, 'invader');
-        invader.anchor.setTo(0.5, 0.5);
+        this.invader = invaders.create(x, y, 'invader');
+        this.invader.anchor.setTo(0.5, 0.5);
 
         let tween = this.game.add.tween(this.invader); // TODO: maybe not necessary
         const minSpeed = -100,
@@ -36,12 +36,12 @@ export class Invader {
                     this.vy > this.game.height + 50 ||
                     this.vy < -50
                 ) {
-                    this.vx = invader.x;
-                    this.vy = invader.y;
+                    this.vx = this.invader.x;
+                    this.vy = this.invader.y;
                 }
 
                 this.game.add
-                    .tween(invader)
+                    .tween(this.invader)
                     .to(
                         { x: this.vx, y: this.vy },
                         1750,

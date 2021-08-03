@@ -124,12 +124,9 @@ export class Game {
             socket.on('health', (msg) => {
                 if (check(msg)) {
                     console.log('P2 health');
-                    this.health = msg.health;
+                    this.ship.setHealth(msg.health);
                     this.lifeImage.getFirstAlive()?.kill();
-
-                    if (msg.shipCollideInvader) {
-                        this.explodeInvader(msg.index);
-                    }
+                    this.explodeInvader(msg.index);
                 }
             });
 
@@ -146,7 +143,15 @@ export class Game {
                 }
             });
 
-            // Ship
+            // New invader
+            socket.on('invaders', (msg) => {
+                if (check(msg) && msg.score < 20) {
+                    console.log('P2 invaders');
+                    this.invaders.createInvader(msg.x, msg.y); // TODO accurately place them
+                }
+            });
+
+            // Ship / invaders position
             socket.on('update', (msg) => {
                 if (check(msg)) {
                     console.log('P2 update');
@@ -155,21 +160,13 @@ export class Game {
                         this.ship.fireBullet();
                     }
 
-                    this.invaders.update(msg.invArray);
-                }
-            });
-
-            // Invaders
-            socket.on('invaders', (msg) => {
-                if (check(msg) && this.invaders.getCount() < 20) {
-                    console.log('P2 invaders');
-                    // this.invaders.createInvader(msg.x, msg.y); // TODO accurately place them
+                    this.invaders.update(msg.invaders);
                 }
             });
 
             // Bullet kill
             socket.on('bulletExplosion', (msg) => {
-                if (check(msg) && msg.shipCollideInvader) {
+                if (check(msg)) {
                     console.log('P2 bulletExplosion');
                     this.explodeInvader(msg.index);
                 }
@@ -355,7 +352,7 @@ export class Game {
             this.ship.ship,
             this.invaders.invaders,
             this.playerCollisionHandler,
-            null,
+            () => !this.pause,
             this
         );
     }
@@ -369,36 +366,23 @@ export class Game {
             y,
             rotation,
             fire: this.game.input.keyboard.isDown(Phaser.Keyboard.Z),
-            invArray: this.invaders.getPosArr(),
+            invaders: this.invaders.getPosArr(),
         });
     }
 
-    // createStars(msg) {
-    //     const invader = this.invaders.create(msg.x, msg.y, 'invader');
-    //     invader.anchor.setTo(0.5, 0.5);
-    //     this.score = msg.score;
-    //     const tween = game2.add
-    //         .tween(invader)
-    //         .to(
-    //             { x: msg.vx, y: msg.vy },
-    //             2000,
-    //             Phaser.Easing.Linear.None,
-    //             true,
-    //             0,
-    //             1000,
-    //             true
-    //         );
-    //     tween.onLoop.add(() => this.invaders.y == 10);
-    // }
-
     explodeInvader(index) {
+        console.log('explodeInvader', index);
         const invader = this.invaders.get(index);
         if (invader) {
-            const explosion = this.explosions.getFirstExists(false);
-            explosion.reset(invader.x, invader.y);
-            explosion.play('explode', 30, false, true);
+            this.explode(invader.x, invader.y);
             invader.kill();
         }
+    }
+
+    explode(x, y) {
+        const explosion = this.explosions.getFirstExists(false);
+        explosion?.reset(x, y);
+        explosion?.play('explode', 30, false, true);
     }
 
     // Reset health, ammo, etc.
@@ -430,9 +414,7 @@ export class Game {
     // Destroys invader & bullets on intersection
     bulletCollisionHandler(bullet, invader) {
         // Explosion animation
-        const explosion = this.explosions.getFirstExists(false);
-        explosion?.reset(invader.body.x, invader.body.y);
-        explosion?.play('explode', 30, false, true);
+        this.explode(invader.body.x, invader.body.y);
 
         // Sound for explosion
         this.destroyedAudio.play();
@@ -453,20 +435,15 @@ export class Game {
         // Tell p2 that an invader has been destroyed
         if (!this.pause) {
             socket.emit('double', {
-                check: true,
                 id: this.userId,
                 index,
-                score: this.invaders.getCount(),
-                shipCollideInvader: true,
             });
         }
 
         // Animate explosion when bullet hits invador
         socket.emit('bulletExplosion', {
-            check: true,
             id: this.userId,
             index,
-            shipCollideInvader: true,
         });
 
         console.log(
@@ -488,17 +465,12 @@ export class Game {
 
     // Player loses health or dies when player & invaders intersect
     playerCollisionHandler(ship, invader) {
+        // console.log(ship, ship.alive, invader, invader.alive);
         // console.log('playerCollisionHandler', ship.x, ship.y, 'vs', invader.x, invader.y);
         // console.log(this.ship.getPosition());
-        // Make sure player can't die in between rounds
-        if (this.pause) {
-            return;
-        }
 
         // Explosion animation
-        const explosion = this.explosions.getFirstExists(false);
-        explosion?.reset(invader.body.x, invader.body.y);
-        explosion?.play('explode', 30, false, true);
+        this.explode(invader.body.x, invader.body.y);
 
         // Ship damage
         this.shipDamageAudio.play();
@@ -513,13 +485,20 @@ export class Game {
         // Update p2 health for enemy player
         socket.emit('health', {
             id: this.userId,
-            health: health,
+            health,
             index,
-            shipCollideInvader: true,
         });
 
+        // Tell p2 that an invader has been destroyed
+        // if (!this.pause) {
+        //     socket.emit('double', {
+        //         id: this.userId,
+        //         index,
+        //     });
+        // }
+
         // Update stats
-        const life = this.lifeImage?.getFirstAlive();
+        this.lifeImage?.getFirstAlive()?.kill();
         if (this.winCondition.losses == 1 && health == 0) {
             this.winCondition.losses++;
         }

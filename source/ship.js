@@ -86,6 +86,10 @@ export class Ship {
         return this.health;
     }
 
+    setHealth(health) {
+        this.health = health;
+    }
+
     setAmmo(ammo) {
         this.ammo = ammo;
     }
