@@ -17,13 +17,7 @@ export class Invaders {
 
     createInvader(playerX, playerY) {
         const { x, y } = this.chooseSpawn(playerX, playerY);
-        console.log('Creating invader at', x, y, 'vs player pos:', playerX, playerY);
-        const invader = new Invader(this.game, playerX, playerY, this.invaders);
-
-        console.log(
-            'Finished creating',
-            Array.prototype.indexOf.call(invader.invader.parent.children, invader.invader)
-        );
+        const invader = new Invader(this.game, x, y, this.invaders);
 
         // Send new invader info to server
         if (this.p1) {
