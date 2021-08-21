@@ -23,5 +23,4 @@ Then go to : localhost:12134
 -   Lower default volume
 -   Have a button to go back to the main menu or quit from the game
 -   Sometimes invaders = -1 for unkown reasons
--   Lot of code is duplicated to create screens 1 & 2, try to merge
-    -   Also setup of variables can be improved
+-   Startup screen shows both screens even before pressing play
